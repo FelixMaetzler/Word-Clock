@@ -102,3 +102,38 @@ tm Datum(const time_t unix)
   localtime_r(&unix, &datum);
   return datum;
 }
+/*
+Synchronisiert die interne Zeit mit dem Internet falls dieses verfügbar ist
+Wenn nicht, dann bleibt die alte einfach weiter bestehen
+gibt zurück, ob Sync erfolgreich war oder eben nicht
+ACHTUNG!!! Diese Funktion kann mehr als 5 sek brauchen!!!
+*/
+bool syncDatum(volatile time_t *ptr)
+{
+  time_t datum;
+  int counter = 0;
+  /*
+  Versucht die Zeit zu synchronisieren
+  Entweder bis die Abweichung kleiner als 10 sek ist oder bis er es 5 Mal versucht hat
+  */
+  do
+  {
+    datum = get_Datum();
+
+    counter++;
+    noInterrupts();
+    int akt = *ptr;
+    interrupts();
+    int diff = abs(datum - akt);
+    if (diff < 10)
+    {
+      noInterrupts();
+      *ptr = datum;
+      interrupts();
+      DEBUG_PRINT("Sync hat nach " + String(counter) + " Versuchen geklappt\nOffset waren: " + String(diff) + "s");
+      return true;
+    }
+    delay(1000);
+  } while (counter < 5);
+  return false;
+}
