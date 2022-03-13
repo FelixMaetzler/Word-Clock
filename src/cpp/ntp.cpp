@@ -4,8 +4,11 @@
 
 #include <TZ.h>
 
+// Kümmert sich um die Zeitumstellung. Winter- Sommerzeit
 #define MYTZ TZ_Europe_Berlin
-const char* wochentag[] = {"So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"};
+// Die "deutschen" Wochentage abgekürzt. Beginnend mit Sonntag
+// Wird für das serielle Debuggen benötigt
+const char *wochentag[] = {"So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"};
 
 const unsigned int localPort = 2390; // local port to listen for UDP packets
 
@@ -52,13 +55,7 @@ Es beachtet auch schon direkt Sommer- und Winterzeit
 */
 time_t get_Datum()
 {
-  /*
-  tm datum;
-  time_t zeit = time(nullptr);
-  localtime_r(&zeit, &datum);
-  return datum;
-*/
-return time(nullptr);
+  return time(nullptr);
 }
 /*
 gibt das aktuelle Datum mit Uhrzeit zurück
@@ -73,21 +70,34 @@ tm get_Datum(const long long unix)
   return datum;
 }
 /*
-Diese Funktion nimmt den pointer auf das Datum und gibt einen String zurück
+Diese Funktion nimmt den Pointer auf das Datum und gibt einen String zurück
+Beispiel:
+So 13.03.2022 09:34:00 Uhr
 */
-String Datum_to_String(const tm * datum)
+String Datum_to_String(const tm *datum)
 {
   char buffer[100];
-  strftime(buffer, 80,  + " %d.%m.%Y  %R:%S Uhr", datum);
+  strftime(buffer, 80, +" %d.%m.%Y  %R:%S Uhr", datum);
   String string = buffer;
   string = wochentag[datum->tm_wday] + string;
   return string;
 }
-String Datum_to_String(const time_t datum){
+/*
+Konvertiert ein Datum in einen String
+Beispiel:
+So 13.03.2022 09:34:00 Uhr
+*/
+String Datum_to_String(const time_t datum)
+{
   tm x = Datum(datum);
   return Datum_to_String(&x);
 }
-tm Datum(const time_t unix){
+/*
+konvertiert die Unix-Zeit in ein richtiges Datum
+Sommer und Winterzeit ist schon berücksichtigt
+*/
+tm Datum(const time_t unix)
+{
   tm datum;
   localtime_r(&unix, &datum);
   return datum;

@@ -7,11 +7,15 @@
 
 // Diese werden jede Sek/Min/Std gesetzt
 // Somit können in loop() Dinge einmal pro Sek/Min/Std ausgeführt werden
-volatile bool jede_Sek = false;
-volatile bool jede_Min = false;
-volatile bool jede_Std = false;
-volatile bool jeden_Tag = false;
 
+volatile bool jede_Sek = false;  // wird jede Sekunde gesetzt
+volatile bool jede_Min = false;  // wird jede Minute gesetzt
+volatile bool jede_Std = false;  // wird jede Stunde gesetzt
+volatile bool jeden_Tag = false; // wird jeden Tag gesetzt
+/*
+Hier wird das aktuelle Datum plus Uhrzeit gespeichert.
+Diese wird auch jede Sekunde aktualisiert
+*/
 time_t datum = 0;
 
 CRGB leds[NUM_LEDS];
@@ -26,9 +30,10 @@ void setup()
   timer1_attachInterrupt(onTime1s); // Add ISR Function
   timer1_enable(TIM_DIV16, TIM_EDGE, TIM_LOOP);
   timer1_write(5 * 1e6); // 1 sek
+  // hier wird versucht das aktuelle Datum+Uhrzeit abzurufen
   do
   {
-    datum = get_Datum();
+    datum = get_Datum(); // Wenn es nicht gelingt, wird null zurückgeben
     delay(100);
   } while (datum < 1e6);
 
@@ -49,18 +54,21 @@ void loop()
   {
     jede_Min = false;
     // Wird jede Minute ausgeführt (ungefähr)
+    // aber nur wenn die Sekunde schon ausgeführt wurde
     DEBUG_PRINT(Datum_to_String(datum));
   }
   if (jede_Std && !jede_Sek && !jede_Min)
   {
     jede_Std = false;
     // Wird jede Stunde ausgeführt (ungefähr)
+    // aber nur wenn die Sekunde und Minute schon ausgeführt wurde
     DEBUG_PRINT("Test: Jede Stunde");
   }
   if (jeden_Tag && !jede_Std && !jede_Sek && !jede_Min)
   {
     jeden_Tag = false;
     // Wird jeden Tag ausgeführt (ungefähr)
+    // aber nur wenn die Sekunde, Minute und Stunde schon ausgeführt wurde
     DEBUG_PRINT("Test: Jeden Tag");
   }
 
@@ -79,11 +87,12 @@ void loop()
   }
   */
 }
-
+// HW Timer1 Interrupt. wird jede sek aufgerufen
 void IRAM_ATTR onTime1s()
 {
-  datum++;
+  datum++; // es wird eine Sekunde weitergezählt
   auto zeit = Datum(datum);
+  jede_Sek = true;
   if (zeit.tm_sec == 0)
   {
     jede_Min = true;
@@ -96,5 +105,4 @@ void IRAM_ATTR onTime1s()
       }
     }
   }
-  jede_Sek = true;
 }
