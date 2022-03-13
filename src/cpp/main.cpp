@@ -10,6 +10,7 @@
 volatile bool jede_Sek = false;
 volatile bool jede_Min = false;
 volatile bool jede_Std = false;
+volatile bool jeden_Tag = false;
 
 time_t datum = 0;
 
@@ -56,6 +57,12 @@ void loop()
     // Wird jede Stunde ausgeführt (ungefähr)
     DEBUG_PRINT("Test: Jede Stunde");
   }
+  if (jeden_Tag && !jede_Std && !jede_Sek && !jede_Min)
+  {
+    jeden_Tag = false;
+    // Wird jeden Tag ausgeführt (ungefähr)
+    DEBUG_PRINT("Test: Jeden Tag");
+  }
 
   delay(100);
 
@@ -83,6 +90,10 @@ void IRAM_ATTR onTime1s()
     if (zeit.tm_min == 0)
     {
       jede_Std = true;
+      if (zeit.tm_hour == 0)
+      {
+        jeden_Tag = true;
+      }
     }
   }
   jede_Sek = true;
