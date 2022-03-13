@@ -10,3 +10,4 @@ time_t get_Datum();
 String Datum_to_String(const tm *);
 String Datum_to_String(const time_t);
 tm Datum(const time_t);
+bool syncDatum(volatile time_t *);
