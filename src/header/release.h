@@ -1,3 +1,5 @@
+#ifndef RELEASE_H
+#define RELEASE_H
 #define RELEASE false
 
 #if !RELEASE
@@ -28,3 +30,5 @@ constexpr int colcount = 10;
 
 // Takes care of the time change. Winter- summer time
 #define MYTZ TZ_Europe_Berlin
+
+#endif
