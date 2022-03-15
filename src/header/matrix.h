@@ -14,6 +14,9 @@ public:
 
     // Methoden
 
-    CRGB get_LED(int, int);
-    void matrix_to_LEDArray(CRGB *);
+    CRGB get_LED(int, int) const;
+    void set_LED(CRGB, int, int);
+    void matrix_to_LEDArray(CRGB *) const;
+    void nachLinksSchieben();
+    void letzteSpalteErsetzen(std::vector<CRGB>);
 };

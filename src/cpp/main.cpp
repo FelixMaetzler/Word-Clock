@@ -4,6 +4,7 @@
 
 #include "header/LED.h"
 #include "header/ntp.h"
+#include "header/matrix.h"
 
 // Diese werden jede Sek/Min/Std gesetzt
 // Somit können in loop() Dinge einmal pro Sek/Min/Std ausgeführt werden
