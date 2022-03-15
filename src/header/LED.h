@@ -1,9 +1,9 @@
 #include "FastLED.h"
 #include "release.h"
 
-#define NUM_LEDS ROWCOUNT *COLCOUNT
-#define DATA_PIN 6
+constexpr int num_leds = rowcount * colcount;
+constexpr int led_pin = 6;
 
-extern CRGB leds[NUM_LEDS];
+extern CRGB leds[num_leds];
 
 void led_setup();

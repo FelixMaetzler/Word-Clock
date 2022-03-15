@@ -58,7 +58,7 @@ time_t time_and_date = 0;
 stores the LED-Matrix in an array
 is needed for the FastLED libary
 */
-CRGB leds[NUM_LEDS];
+CRGB leds[num_leds];
 
 /*
 This is the ISR, that get executed every second

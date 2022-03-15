@@ -23,8 +23,8 @@
 // for Matrix
 #define SERPENTINES true
 #define LINEBYLINE false
-#define ROWCOUNT 10
-#define COLCOUNT 10
+constexpr int rowcount = 10;
+constexpr int colcount = 10;
 
 // Takes care of the time change. Winter- summer time
 #define MYTZ TZ_Europe_Berlin
