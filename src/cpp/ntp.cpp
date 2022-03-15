@@ -4,11 +4,8 @@
 
 #include <TZ.h>
 
-// Kümmert sich um die Zeitumstellung. Winter- Sommerzeit
-#define MYTZ TZ_Europe_Berlin
-// Die "deutschen" Wochentage abgekürzt. Beginnend mit Sonntag
-// Wird für das serielle Debuggen benötigt
-const char *wochentag[] = {"So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"};
+// The "German" weekdays abbreviated. Starting with Sunday
+const char *weekday[] = {"So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"};
 
 const unsigned int localPort = 2390; // local port to listen for UDP packets
 
@@ -23,7 +20,7 @@ byte packetBuffer[NTP_PACKET_SIZE]; // buffer to hold incoming and outgoing pack
 WiFiUDP udp;
 
 /*
-Setzt die Zeitzone und den Zeitserver und verbindet sich mit dem WLAN
+Sets the time zone and time server and connects to the WIFI
 */
 void ntp_setup()
 {
@@ -31,7 +28,7 @@ void ntp_setup()
   DEBUG_PRINT("Connecting to ");
   DEBUG_PRINT(SSID);
   WiFi.mode(WIFI_STA);
-  WiFi.begin(SSID, WLAN_Passwort);
+  WiFi.begin(SSID, WLAN_Password);
 
   while (WiFi.status() != WL_CONNECTED)
   {
@@ -50,87 +47,88 @@ void ntp_setup()
   DEBUG_PRINT(udp.localPort());
 }
 /*
-gibt das aktuelle Datum mit Uhrzeit zurück
-Es beachtet auch schon direkt Sommer- und Winterzeit
+returns the current date with time
+It also already directly respects summer and winter time
 */
-time_t get_Datum()
+time_t get_Date_and_Time()
 {
   return time(nullptr);
 }
 /*
-gibt das aktuelle Datum mit Uhrzeit zurück
-Es beachtet auch schon direkt Sommer- und Winterzeit
-dafür wird einfach die Unixzeit übergeben
+returns the current date with time
+It also already directly respects summer and winter time
+for this simply the Unix time is transferred
 */
-tm get_Datum(const long long unix)
+tm get_Date_and_Time(const long long unix)
 {
-  tm datum;
-  time_t zeit = unix;
-  localtime_r(&zeit, &datum);
-  return datum;
+  tm date_and_time;
+  time_t time = unix;
+  localtime_r(&time, &date_and_time);
+  return date_and_time;
 }
 /*
-Diese Funktion nimmt den Pointer auf das Datum und gibt einen String zurück
-Beispiel:
+This function takes the pointer to the date and returns a string
+Example:
 So 13.03.2022 09:34:00 Uhr
 */
-String Datum_to_String(const tm *datum)
+String Date_and_Time_to_String(const tm *date_and_time)
 {
   char buffer[100];
-  strftime(buffer, 80, +" %d.%m.%Y  %R:%S Uhr", datum);
+  strftime(buffer, 80, +" %d.%m.%Y  %R:%S Uhr", date_and_time);
   String string = buffer;
-  string = wochentag[datum->tm_wday] + string;
+  string = weekday[date_and_time->tm_wday] + string;
   return string;
 }
 /*
-Konvertiert ein Datum in einen String
-Beispiel:
+Converts a date into a string
+Example:
 So 13.03.2022 09:34:00 Uhr
 */
-String Datum_to_String(const time_t datum)
+String Date_and_Time_to_String(const time_t date_and_time)
 {
-  tm x = Datum(datum);
-  return Datum_to_String(&x);
+  tm x = Date_and_Time(date_and_time);
+  return Date_and_Time_to_String(&x);
 }
 /*
-konvertiert die Unix-Zeit in ein richtiges Datum
-Sommer und Winterzeit ist schon berücksichtigt
+converts the Unix time to a correct date
+Summer and winter time is already considered
 */
-tm Datum(const time_t unix)
+tm Date_and_Time(const time_t unix)
 {
-  tm datum;
-  localtime_r(&unix, &datum);
-  return datum;
+  tm date_and_time;
+  localtime_r(&unix, &date_and_time);
+  return date_and_time;
 }
 /*
-Synchronisiert die interne Zeit mit dem Internet falls dieses verfügbar ist
-Wenn nicht, dann bleibt die alte einfach weiter bestehen
-gibt zurück, ob Sync erfolgreich war oder eben nicht
-ACHTUNG!!! Diese Funktion kann mehr als 5 sek brauchen!!!
+Synchronizes the internal time with the Internet if it is available.
+If not, then the old one simply remains in place
+returns if sync was successful or not
+ATTENTION!!! This function may take more than 5 seconds!!!
 */
 bool syncDatum(volatile time_t *ptr)
 {
-  time_t datum;
+  time_t date_and_time;
   int counter = 0;
   /*
-  Versucht die Zeit zu synchronisieren
-  Entweder bis die Abweichung kleiner als 10 sek ist oder bis er es 5 Mal versucht hat
+  Tries to synchronize the time
+  Either until the deviation is less than 10 seconds
+  or until he has tried 5 times
   */
   do
   {
-    datum = get_Datum();
+    date_and_time = get_Date_and_Time();
 
     counter++;
     noInterrupts();
     int akt = *ptr;
     interrupts();
-    int diff = abs(datum - akt);
+    int diff = abs(date_and_time - akt);
     if (diff < 10)
     {
       noInterrupts();
-      *ptr = datum;
+      *ptr = date_and_time;
       interrupts();
-      DEBUG_PRINT("Sync hat nach " + String(counter) + " Versuchen geklappt\nOffset waren: " + String(diff) + "s");
+      DEBUG_PRINT("Sync worked after " + String(counter) + " tries\nOffset was: " + String(diff) + "s");
       return true;
     }
     delay(1000);

@@ -6,29 +6,63 @@
 #include "header/ntp.h"
 #include "header/matrix.h"
 
-// Diese werden jede Sek/Min/Std gesetzt
-// Somit können in loop() Dinge einmal pro Sek/Min/Std ausgeführt werden
-
-volatile bool jede_Sek = false;  // wird jede Sekunde gesetzt
-volatile bool jede_Min = false;  // wird jede Minute gesetzt
-volatile bool jede_Std = false;  // wird jede Stunde gesetzt
-volatile bool jeden_Tag = false; // wird jeden Tag gesetzt
-
-// Funktionsdeklarationen
-
-void jede_sek();
-void jede_min();
-void jede_std();
-void jeden_tag();
+// this variables get set every sec/min/h/d
+// because of this, youc can do things every sec/min/h/d in the loop()
 
 /*
-Hier wird das aktuelle Datum plus Uhrzeit gespeichert.
-Diese wird auch jede Sekunde aktualisiert
+DONT USE THIS VARIABLE!!!
+get set every second
+Use every_sec() instead
 */
-volatile time_t datum_isr = 0;
-time_t datum = 0;
+volatile bool every_Sec = false;
+/*
+DONT USE THIS VARIABLE!!!
+get set every minute
+Use every_min() instead
+*/
+volatile bool every_Min = false;
+/*
+DONT USE THIS VARIABLE!!!
+get set every hour
+Use every_hour() instead
+*/
+volatile bool every_H = false;
+/*
+DONT USE THIS VARIABLE!!!
+get set every day
+Use every_day() instead
+*/
+volatile bool every_D = false;
+
+// function declaration
+
+void every_sec();
+void every_min();
+void every_hour();
+void every_day();
+
+/*
+DONT USE THIS VARIABLE!!!
+this stores the current date and time
+this gets updated every second in an ISR
+this can lead to fatal errors in your program
+*/
+volatile time_t time_and_date_isr = 0;
+/*
+this stores the current date and time
+this gets updated roughly every second
+you should only use this for your calculations!!!
+*/
+time_t time_and_date = 0;
+/*
+stores the LED-Matrix in an array
+is needed for the FastLED libary
+*/
 CRGB leds[NUM_LEDS];
 
+/*
+This is the ISR, that get executed every second
+*/
 void IRAM_ATTR onTime1s();
 
 void setup()
@@ -38,129 +72,128 @@ void setup()
   led_setup();
   timer1_attachInterrupt(onTime1s); // Add ISR Function
   timer1_enable(TIM_DIV16, TIM_EDGE, TIM_LOOP);
-  timer1_write(5 * 1e6); // 1 sek
-  // hier wird versucht das aktuelle Datum+Uhrzeit abzurufen
+  timer1_write(5 * 1e6); // 1 sec
+  // this loop tries to get the latest time and date
   do
   {
-    datum = get_Datum(); // Wenn es nicht gelingt, wird null zurückgeben
+    time_and_date = get_Date_and_Time(); // If get_Date_and_Time() do not get the latest date and time, it returns 0 (or another "small" number)
     delay(100);
-  } while (datum < 1e6);
+  } while (time_and_date < 1e6); // If it is not a small number, it succeeded
+
   noInterrupts();
-  datum_isr = datum;
+  time_and_date_isr = time_and_date;
   interrupts();
 
-  DEBUG_PRINT("es ist gerade: ");
-  DEBUG_PRINT(Datum_to_String(datum));
+  DEBUG_PRINT("It is: ");
+  DEBUG_PRINT(Date_and_Time_to_String(time_and_date));
 }
-// time_t unix = 1648342790; //10 sek vor Sommerzeit 2022
-// time_t unix = 1667091590; //10 sek vor Winterzeit 2022
+// time_t unix = 1648342790; //10 sec before Summertime 2022
+// time_t unix = 1667091590; //10 sec before wintertime 2022
 
 void loop()
 {
-  // den folgenden Block nicht anfassen!!!
+  // DONT TOUCH THE FOLLOWING BLOCK
   {
     noInterrupts();
-    if (jede_Sek)
+    if (every_Sec)
     {
-      jede_Sek = false;
-      datum = datum_isr;
+      every_Sec = false;
+      time_and_date = time_and_date_isr;
       interrupts();
-      // Wird jede Sekunde ausgeführt (ungefähr)
-      jede_sek();
+      // gets executed roughly every second
+      every_sec();
     }
     noInterrupts();
-    if (jede_Min && !jede_Sek)
+    if (every_Min && !every_Sec)
     {
-      jede_Min = false;
+      every_Min = false;
       interrupts();
-      // Wird jede Minute ausgeführt (ungefähr)
-      // aber nur wenn die Sekunde schon ausgeführt wurde
-      jede_min();
+      // gets executed roughly every minute
+      // but only if second is already executed
+      every_min();
     }
     noInterrupts();
-    if (jede_Std && !jede_Sek && !jede_Min)
+    if (every_H && !every_Sec && !every_Min)
     {
-      jede_Std = false;
+      every_H = false;
       interrupts();
-      // Wird jede Stunde ausgeführt (ungefähr)
-      // aber nur wenn die Sekunde und Minute schon ausgeführt wurde
-      jede_std();
+      // gets executed roughly every hour
+      // but only if second and minute is already executed
+      every_hour();
     }
     noInterrupts();
-    if (jeden_Tag && !jede_Std && !jede_Sek && !jede_Min)
+    if (every_D && !every_H && !every_Sec && !every_Min)
     {
-      jeden_Tag = false;
+      every_D = false;
       interrupts();
-      // Wird jeden Tag ausgeführt (ungefähr)
-      // aber nur wenn die Sekunde, Minute und Stunde schon ausgeführt wurde
-      jeden_tag();
+      // gets executed roughly every day
+      // but only if second, minute and hour is already executed
+      every_day();
     }
     interrupts();
   }
-  // bis hier
+  // UNTIL HERE
 
   delay(100);
-
-  /*
-  for (int dot = 0; dot < NUM_LEDS; dot++)
-  {
-    leds[dot] = CRGB::BlueViolet;
-    leds[dot] &= 20;
-    FastLED.show();
-    // clear this led for the next time around the loop
-    leds[dot] = CRGB::Black;
-    delay(30);
-
-  }
-  */
 }
-// HW Timer1 Interrupt. wird jede sek aufgerufen
+// HW Timer1 Interrupt. Gets executed every second
 void IRAM_ATTR onTime1s()
 {
-  datum_isr++; // es wird eine Sekunde weitergezählt
-  jede_Sek = true;
-  if (datum_isr % 60 == 0)
+  time_and_date_isr++; // count one second
+  every_Sec = true;
+  if (time_and_date_isr % 60 == 0)
   {
-    jede_Min = true;
-    if (datum_isr % (60 * 60) == 0)
+    every_Min = true;
+    if (time_and_date_isr % (60 * 60) == 0)
     {
-      jede_Std = true;
-      if (datum_isr % (60 * 60 * 24) == 0)
+      every_H = true;
+      if (time_and_date_isr % (60 * 60 * 24) == 0)
       {
-        jeden_Tag = true;
+        every_D = true;
       }
     }
   }
 }
 /*
-Wird (ungefähr) jede Sekunde aufgerufen
+gets executed roughly every second
+Note: if the project is too busy, it can happen,
+that single seconds can be skiped.
 */
-void jede_sek()
+void every_sec()
 {
 }
 /*
-Wird (ungefähr) jede Minute aufgerufen
+gets executed roughly every minute
+Note: if the project is too busy, it can happen,
+that single minutes can be skiped.
+This is highly unlikely, because the project has to be very busy
 */
-void jede_min()
+void every_min()
 {
-  DEBUG_PRINT(Datum_to_String(datum));
-  if (datum % (5 * 60) == 0)
+  DEBUG_PRINT(Date_and_Time_to_String(time_and_date));
+  if (time_and_date % (5 * 60) == 0)
   {
-    syncDatum(&datum_isr);
+    syncDatum(&time_and_date_isr);
   }
 }
 /*
-Wird (ungefähr) jede Stunde aufgerufen
+gets executed roughly every hour
+Note: if the project is too busy, it can happen,
+that single hours can be skiped.
+This is highly unlikely, because the project has to be very, very busy
 */
-void jede_std()
+void every_hour()
 {
-  DEBUG_PRINT("Test: Jede Stunde");
+  DEBUG_PRINT("Test: every hour");
 }
 /*
-Wird (ungefähr) jeden Tag aufgerufen
+gets executed roughly every day
+Note: if the project is too busy, it can happen,
+that single days can be skiped.
+This is highly unlikely, because the project has to be very, very, very busy
 */
-void jeden_tag()
+void every_day()
 {
-  DEBUG_PRINT("Test: Jeden Tag");
-  syncDatum(&datum_isr);
+  DEBUG_PRINT("Test: every day");
+  syncDatum(&time_and_date_isr);
 }

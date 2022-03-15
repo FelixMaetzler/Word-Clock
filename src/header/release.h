@@ -20,8 +20,11 @@
 #define DEBUG(x)
 #endif
 
-// für Matrix
-#define SERPENTINEN true
-#define ZEILENWEISE false
-#define ZEILENZAHL 10
-#define SPALTENZAHL 10
+// for Matrix
+#define SERPENTINES true
+#define LINEBYLINE false
+#define ROWCOUNT 10
+#define COLCOUNT 10
+
+// Takes care of the time change. Winter- summer time
+#define MYTZ TZ_Europe_Berlin

@@ -8,15 +8,15 @@ private:
     std::vector<std::vector<CRGB>> matrix;
 
 public:
-    // Konstruktoren
+    // Constructors
 
     Matrix();
 
-    // Methoden
+    // Methodds
 
     CRGB get_LED(int, int) const;
     void set_LED(CRGB, int, int);
     void matrix_to_LEDArray(CRGB *) const;
-    void nachLinksSchieben();
-    void letzteSpalteErsetzen(std::vector<CRGB>);
+    void shift_Left();
+    void replace_last_col(std::vector<CRGB>);
 };
