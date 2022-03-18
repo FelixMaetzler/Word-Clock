@@ -71,12 +71,8 @@ void Matrix::shift_Left()
         std::rotate(x, x + 1, x + colcount);
     }
 }
-void Matrix::replace_last_col(std::vector<CRGB> col)
+void Matrix::replace_last_col(std::array<CRGB, rowcount> col)
 {
-    DEBUG(if (col.size() != rowcount) {
-        DEBUG_PRINT("replace_last_col dont work. Vector doesent fit");
-        return;
-    });
     for (uint8_t row = 0; row < rowcount; row++)
     {
         this->set_LED(col.at(row), row, colcount - 1);
@@ -89,8 +85,8 @@ void Matrix::set_digital_clock(const tm time, CRGB color)
     const uint8_t min_tens_digit = time.tm_min / 10;
     const uint8_t min_ones_digit = time.tm_min % 10;
     const uint8_t array[] = {hour_tens_digit, hour_ones_digit, min_tens_digit, min_ones_digit};
-    const uint8_t const_row_begin = 0;
-    const uint8_t const_col_begin = 2;
+    constexpr uint8_t const_row_begin = 0;
+    constexpr uint8_t const_col_begin = 2;
     uint8_t row_begin;
     uint8_t col_begin;
 
@@ -122,14 +118,7 @@ void Matrix::set_digital_clock(const tm time, CRGB color)
             for (uint8_t col = col_begin; col < col_begin + 3; col++)
             {
                 bool OnOff = number[row - row_begin][col - col_begin];
-                if (OnOff)
-                {
-                    this->set_LED(color, row, col);
-                }
-                else
-                {
-                    this->set_LED(CRGB::Black, row, col);
-                }
+                bool_to_color(OnOff, color);
             }
         }
     }
@@ -142,5 +131,66 @@ void Matrix::clear()
         {
             this->set_LED(CRGB::Black, row, col);
         }
+    }
+}
+uint16_t Matrix::scrolling_text(const uint16_t framecounter, String &sentence, const CRGB color)
+{
+    const uint8_t letterIndex = framecounter / 6;
+    const uint8_t letterColIndex = framecounter % 6;
+    const char letter = sentence.charAt(letterIndex);
+    std::array<CRGB, rowcount> matrix_last_col;
+    matrix_last_col.fill(CRGB::Black);
+    constexpr uint8_t start = (rowcount / 2) - 3;
+    std::array<std::array<bool, 5>, 7> letterbuffer;
+    if (letterColIndex == 5)
+    {
+        // you need an emty col
+    }
+    else if (letter >= 'A' && letter <= 'Z')
+    {
+        letterbuffer = InttoArray7x5(CapitalLetterArray7x5[letter - 'A']);
+    }
+    else if (letter >= '0' && letter <= '9')
+    {
+        letterbuffer = InttoArray7x5(NumberArray7x5[letter - '0']);
+    }
+    else if (letter == ' ')
+    {
+        // its the space bar
+    }
+    else
+    {
+        DEBUG_PRINT("scrolling_text() has gotten an undefined character");
+    }
+
+    for (uint8_t i = start; i < start + 7; i++)
+    {
+        matrix_last_col[i] = bool_to_color(letterbuffer[i][4], color);
+    }
+    this->shift_Left();
+    this->replace_last_col(matrix_last_col);
+}
+void Matrix::set_letter(const std::array<std::array<bool, 5>, 7> letter, const uint8_t rowStart, const uint8_t colStart, const CRGB color)
+{
+    DEBUG(if (rowStart + 5 >= rowcount || rowStart < 0 || colStart < 0 || colStart + 7 >= colcount) {
+        DEBUG_PRINT("set_letter has not allowed indizies (Over oer Underflow");
+    });
+    for (uint8_t row = rowStart; row < rowStart + 7; row++)
+    {
+        for (uint8_t col = colStart; col < colStart + 5; col++)
+        {
+            this->set_LED(bool_to_color(letter.at(row).at(col), color), row, col);
+        }
+    }
+}
+CRGB bool_to_color(const bool x, const CRGB color)
+{
+    if (x)
+    {
+        return color;
+    }
+    else
+    {
+        return CRGB::Black;
     }
 }
