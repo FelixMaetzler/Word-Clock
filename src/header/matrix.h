@@ -1,6 +1,7 @@
 #include "FastLED.h"
 #include <vector>
 #include "release.h"
+#include "numbers5x3.h"
 
 class Matrix
 {
@@ -19,4 +20,6 @@ public:
     void matrix_to_LEDArray(CRGB *) const;
     void shift_Left();
     void replace_last_col(std::vector<CRGB>);
+    void set_digital_clock(const tm, CRGB);
+    void clear();
 };
