@@ -121,7 +121,7 @@ bool syncDatum(volatile time_t *ptr)
 
     counter++;
     noInterrupts();
-    uint8_t akt = *ptr;
+    auto akt = *ptr;
     interrupts();
     uint8_t diff = abs(date_and_time - akt);
     if (diff < 10)
