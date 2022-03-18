@@ -65,9 +65,9 @@ constexpr auto nine5x3 = std::array<std::array<bool, 3>, 5>{
 /*
 Helperfunction to compress a 5x3 7-Segment number into an int
 this way you store the information in 2 Byte instead of 15
-ist is constexpr, because the compression is done at Compiletime
+it is constexpr, because the compression is done at Compiletime
 */
-constexpr uint16_t arrayToInt(const std::array<std::array<bool, 3>, 5> array)
+constexpr uint16_t arrayToInt5x3(const std::array<std::array<bool, 3>, 5> array)
 {
     uint16_t number = 0;
     for (uint8_t row = 0; row < 5; row++)
@@ -81,10 +81,10 @@ constexpr uint16_t arrayToInt(const std::array<std::array<bool, 3>, 5> array)
     return number;
 }
 /*
-this Function decomppresses the 5x3 7-Segment number
+this Function decompresses the 5x3 7-Segment number
 this is done at runtime
 */
-std::array<std::array<bool, 3>, 5> InttoArray(const uint16_t number)
+std::array<std::array<bool, 3>, 5> InttoArray5x3(const uint16_t number)
 {
     auto new_number = number;
     std::array<std::array<bool, 3>, 5> array;
@@ -108,23 +108,23 @@ std::array<std::array<bool, 3>, 5> InttoArray(const uint16_t number)
 this function wraps all 10 5x3 7-Segment Digits into one big int array
 this is done at compiletime
 */
-constexpr std::array<uint16_t, 10> arrayToInt()
+constexpr std::array<uint16_t, 10> arrayToInt5x3()
 {
     return {
-        arrayToInt(zero5x3),
-        arrayToInt(one5x3),
-        arrayToInt(two5x3),
-        arrayToInt(three5x3),
-        arrayToInt(four5x3),
-        arrayToInt(five5x3),
-        arrayToInt(six5x3),
-        arrayToInt(seven5x3),
-        arrayToInt(eight5x3),
-        arrayToInt(nine5x3),
+        arrayToInt5x3(zero5x3),
+        arrayToInt5x3(one5x3),
+        arrayToInt5x3(two5x3),
+        arrayToInt5x3(three5x3),
+        arrayToInt5x3(four5x3),
+        arrayToInt5x3(five5x3),
+        arrayToInt5x3(six5x3),
+        arrayToInt5x3(seven5x3),
+        arrayToInt5x3(eight5x3),
+        arrayToInt5x3(nine5x3),
     };
 }
 /*
 This is the Array for all 10 5x3 7-Segment Digits in int form
 this is done at compiletime
 */
-constexpr const auto Numberarray5x3 = arrayToInt();
+constexpr const auto Numberarray5x3 = arrayToInt5x3();
