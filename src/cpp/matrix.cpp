@@ -5,7 +5,7 @@ Standartconstructor
 */
 Matrix::Matrix() : matrix(rowcount, std::vector<CRGB>(colcount)) {}
 
-CRGB Matrix::get_LED(int row, int col) const
+CRGB Matrix::get_LED(uint8_t row, uint8_t col) const
 {
     DEBUG(
         if (row >= rowcount || row < 0 || col >= colcount || col < 0) {
@@ -14,7 +14,7 @@ CRGB Matrix::get_LED(int row, int col) const
         });
     return matrix.at(row).at(col);
 }
-void Matrix::set_LED(CRGB led, int row, int col)
+void Matrix::set_LED(CRGB led, uint8_t row, uint8_t col)
 {
     DEBUG(
         if (row >= rowcount || row < 0 || col >= colcount || col < 0) {
@@ -25,13 +25,13 @@ void Matrix::set_LED(CRGB led, int row, int col)
 void Matrix::matrix_to_LEDArray(CRGB *leds) const
 {
 #if SERPENTINES
-    int i;
-    for (int row = 0; row < rowcount; row++)
+    uint16_t i;
+    for (uint8_t row = 0; row < rowcount; row++)
     {
         if (row % 2 == 0)
         {
             // from left to right
-            for (int col = 0; col < colcount; col++)
+            for (uint8_t col = 0; col < colcount; col++)
             {
                 i = row * colcount + col;
                 leds[i] = this->get_LED(row, col);
@@ -40,8 +40,8 @@ void Matrix::matrix_to_LEDArray(CRGB *leds) const
         else
         {
             // from right to left
-            int counter = 0;
-            for (int col = colcount - 1; col >= 0; col--)
+            uint8_t counter = 0;
+            for (uint8_t col = colcount - 1; col >= 0; col--)
             {
                 i = row * colcount + counter;
                 leds[i] = this->get_LED(row, col);
@@ -52,10 +52,10 @@ void Matrix::matrix_to_LEDArray(CRGB *leds) const
 #endif
 
 #if LINEBYLINE
-    int i;
-    for (int row = 0; row < rowcount; row++)
+    uint16_t i;
+    for (uint8_t row = 0; row < rowcount; row++)
     {
-        for (int col = 0; col < colcount; col++)
+        for (uint8_t col = 0; col < colcount; col++)
         {
             i = row * colcount + col;
             leds[i] = this->get_LED(row, col);
@@ -77,7 +77,7 @@ void Matrix::replace_last_col(std::vector<CRGB> col)
         DEBUG_PRINT("replace_last_col dont work. Vector doesent fit");
         return;
     });
-    for (int row = 0; row < rowcount; row++)
+    for (uint8_t row = 0; row < rowcount; row++)
     {
         this->set_LED(col.at(row), row, colcount - 1);
     }

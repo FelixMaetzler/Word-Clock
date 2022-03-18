@@ -70,11 +70,11 @@ ist is constexpr, because the compression is done at Compiletime
 constexpr uint16_t arrayToInt(const std::array<std::array<bool, 3>, 5> array)
 {
     uint16_t number = 0;
-    for (int row = 0; row < 5; row++)
+    for (uint8_t row = 0; row < 5; row++)
     {
-        for (int col = 0; col < 3; col++)
+        for (uint8_t col = 0; col < 3; col++)
         {
-            int i = (int)array.at(row).at(col);
+            bool i = array.at(row).at(col);
             number = (number << 1) | i;
         }
     }
@@ -89,15 +89,15 @@ std::array<std::array<bool, 3>, 5> InttoArray(const uint16_t number)
     auto new_number = number;
     std::array<std::array<bool, 3>, 5> array;
     std::array<bool, 15> test;
-    for (int i = 14; i >= 0; i--)
+    for (uint8_t i = 14; i >= 0; i--)
     {
         bool rest = new_number % 2;
         new_number /= 2;
         test[i] = rest;
     }
-    for (int row = 0; row < 5; row++)
+    for (uint8_t row = 0; row < 5; row++)
     {
-        for (int col = 0; col < 3; col++)
+        for (uint8_t col = 0; col < 3; col++)
         {
             array.at(row).at(col) = test[row * 3 + col];
         }

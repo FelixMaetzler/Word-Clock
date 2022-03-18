@@ -1,18 +1,19 @@
 #include "header/release.h"
 #include "header/secret.h"
 #include "header/ntp.h"
+#include "stdlib.h"
 
 #include <TZ.h>
 
 // The "German" weekdays abbreviated. Starting with Sunday
 const char *weekday[] = {"So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"};
 
-const unsigned int localPort = 2390; // local port to listen for UDP packets
+const uint16_t localPort = 2390; // local port to listen for UDP packets
 
 IPAddress timeServerIP; // time.nist.gov NTP server address
 const char *ntpServerName = "time.nist.gov";
 
-const int NTP_PACKET_SIZE = 48; // NTP time stamp is in the first 48 bytes of the message
+const uint8_t NTP_PACKET_SIZE = 48; // NTP time stamp is in the first 48 bytes of the message
 
 byte packetBuffer[NTP_PACKET_SIZE]; // buffer to hold incoming and outgoing packets
 
@@ -108,7 +109,7 @@ ATTENTION!!! This function may take more than 5 seconds!!!
 bool syncDatum(volatile time_t *ptr)
 {
   time_t date_and_time;
-  int counter = 0;
+  uint8_t counter = 0;
   /*
   Tries to synchronize the time
   Either until the deviation is less than 10 seconds
@@ -120,9 +121,9 @@ bool syncDatum(volatile time_t *ptr)
 
     counter++;
     noInterrupts();
-    int akt = *ptr;
+    uint8_t akt = *ptr;
     interrupts();
-    int diff = abs(date_and_time - akt);
+    uint8_t diff = abs(date_and_time - akt);
     if (diff < 10)
     {
       noInterrupts();

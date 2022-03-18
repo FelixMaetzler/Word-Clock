@@ -1,3 +1,5 @@
+#include "stdlib.h"
+
 #ifndef RELEASE_H
 #define RELEASE_H
 
@@ -54,9 +56,9 @@ if the LEDs are connected like:
 #define LINEBYLINE false
 
 /*defines the row count of the matrix*/
-constexpr int rowcount = 10;
+constexpr uint8_t rowcount = 10;
 /*defines the coloum count of the matrix*/
-constexpr int colcount = 10;
+constexpr uint8_t colcount = 10;
 
 // Takes care of the time change. Winter- summer time
 #define MYTZ TZ_Europe_Berlin
