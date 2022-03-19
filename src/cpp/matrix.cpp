@@ -1,11 +1,13 @@
 #include "header/matrix.h"
 
 /*
-Standartconstructor
+standart constructor
 */
 Matrix::Matrix() : matrix(rowcount, std::vector<CRGB>(colcount)) {}
-
-CRGB Matrix::get_LED(uint8_t row, uint8_t col) const
+/*
+returns the CRGB value of a LED at position (row, col) in the matrix
+*/
+CRGB Matrix::get_LED(const uint8_t row, const uint8_t col) const
 {
     DEBUG(
         if (row >= rowcount || row < 0 || col >= colcount || col < 0) {
@@ -14,7 +16,10 @@ CRGB Matrix::get_LED(uint8_t row, uint8_t col) const
         });
     return matrix.at(row).at(col);
 }
-void Matrix::set_LED(CRGB led, uint8_t row, uint8_t col)
+/*
+sets the CRGB value of a LED with the position (row, col)
+*/
+void Matrix::set_LED(const CRGB led, const uint8_t row, const uint8_t col)
 {
     DEBUG(
         if (row >= rowcount || row < 0 || col >= colcount || col < 0) {
@@ -22,6 +27,11 @@ void Matrix::set_LED(CRGB led, uint8_t row, uint8_t col)
         });
     this->matrix[row][col] = led;
 }
+/*
+converts the matrix in the LED array controlled by FastLed
+make sure that you choose the correct LED Layout in the release.h
+currenty available: Serpentines and Linebyline
+*/
 void Matrix::matrix_to_LEDArray(CRGB *leds) const
 {
 #if SERPENTINES
@@ -63,6 +73,10 @@ void Matrix::matrix_to_LEDArray(CRGB *leds) const
     }
 #endif
 }
+/*
+shift the entire matrix one to the left
+the first column gets wrapped arrount and becomes the last column
+*/
 void Matrix::shift_Left()
 {
     for (auto &row : this->matrix)
@@ -71,20 +85,27 @@ void Matrix::shift_Left()
         std::rotate(x, x + 1, x + colcount);
     }
 }
-void Matrix::replace_last_col(std::array<CRGB, rowcount> col)
+/*
+with this method you can set the last column
+you need this if you shift_left() and dont want to wrap arround
+*/
+void Matrix::set_last_col(const std::array<CRGB, rowcount> col)
 {
     for (uint8_t row = 0; row < rowcount; row++)
     {
         this->set_LED(col.at(row), row, colcount - 1);
     }
 }
-void Matrix::set_digital_clock(const tm time, CRGB color)
+/*
+sets the matrix to the provided tm with the provided color
+*/
+void Matrix::set_digital_clock(const tm time, const CRGB color)
 {
     const uint8_t hour_tens_digit = time.tm_hour / 10;
     const uint8_t hour_ones_digit = time.tm_hour % 10;
     const uint8_t min_tens_digit = time.tm_min / 10;
     const uint8_t min_ones_digit = time.tm_min % 10;
-    const uint8_t array[] = {hour_tens_digit, hour_ones_digit, min_tens_digit, min_ones_digit};
+    const std::array<uint8_t, 4> array{{hour_tens_digit, hour_ones_digit, min_tens_digit, min_ones_digit}};
     constexpr uint8_t const_row_begin = 0;
     constexpr uint8_t const_col_begin = 2;
     uint8_t row_begin;
@@ -123,6 +144,9 @@ void Matrix::set_digital_clock(const tm time, CRGB color)
         }
     }
 }
+/*
+sets every LED in the matrix to black
+*/
 void Matrix::clear()
 {
     for (uint8_t row = 0; row < rowcount; row++)
@@ -133,6 +157,13 @@ void Matrix::clear()
         }
     }
 }
+/*
+animates a scrolling text animation from right to left
+you have to provide the String and the color and the frame you want to display
+framecounter starts at zero and you have to count it up
+so you can control the scrolling speed yourself
+max framecounter is string.size() * 6
+*/
 uint16_t Matrix::scrolling_text(const uint16_t framecounter, String &sentence, const CRGB color)
 {
     const uint8_t letterIndex = framecounter / 6;
@@ -146,11 +177,11 @@ uint16_t Matrix::scrolling_text(const uint16_t framecounter, String &sentence, c
     {
         // you need an emty col
     }
-    else if (letter >= 'A' && letter <= 'Z')
+    else if ('A' <= letter && letter <= 'Z')
     {
         letterbuffer = decompress7x5(CapitalLetters7x5[letter - 'A']);
     }
-    else if (letter >= '0' && letter <= '9')
+    else if ('0' <= letter && letter <= '9')
     {
         letterbuffer = decompress7x5(Numbers7x5[letter - '0']);
     }
@@ -168,12 +199,15 @@ uint16_t Matrix::scrolling_text(const uint16_t framecounter, String &sentence, c
         matrix_last_col[i] = bool_to_color(letterbuffer[i][4], color);
     }
     this->shift_Left();
-    this->replace_last_col(matrix_last_col);
+    this->set_last_col(matrix_last_col);
 }
+/*
+this method sets one 7x5 character to the provided position in the provided color
+*/
 void Matrix::set_letter(const std::array<std::array<bool, 5>, 7> letter, const uint8_t rowStart, const uint8_t colStart, const CRGB color)
 {
     DEBUG(if (rowStart + 5 >= rowcount || rowStart < 0 || colStart < 0 || colStart + 7 >= colcount) {
-        DEBUG_PRINT("set_letter has not allowed indizies (Over oer Underflow");
+        DEBUG_PRINT("set_letter has not allowed indizies (Over or Underflow");
     });
     for (uint8_t row = rowStart; row < rowStart + 7; row++)
     {
@@ -183,14 +217,16 @@ void Matrix::set_letter(const std::array<std::array<bool, 5>, 7> letter, const u
         }
     }
 }
-CRGB bool_to_color(const bool x, const CRGB color)
+/*
+this is a helper function
+it retuns CRGB::Black if x is false and color if x is true
+*/
+inline CRGB bool_to_color(const bool x, const CRGB color)
 {
+    CRGB result = CRGB::Black;
     if (x)
     {
-        return color;
+        result = color;
     }
-    else
-    {
-        return CRGB::Black;
-    }
+    return result;
 }
