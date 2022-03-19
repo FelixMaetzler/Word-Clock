@@ -92,7 +92,7 @@ void Matrix::set_digital_clock(const tm time, CRGB color)
 
     for (uint8_t i = 0; i < 4; i++)
     {
-        auto number = InttoArray5x3(Numberarray5x3[array[i]]);
+        auto number = decompress5x3(Numbers5x3[array[i]]);
         switch (i)
         {
         case 0:
@@ -148,11 +148,11 @@ uint16_t Matrix::scrolling_text(const uint16_t framecounter, String &sentence, c
     }
     else if (letter >= 'A' && letter <= 'Z')
     {
-        letterbuffer = InttoArray7x5(CapitalLetterArray7x5[letter - 'A']);
+        letterbuffer = decompress7x5(CapitalLetters7x5[letter - 'A']);
     }
     else if (letter >= '0' && letter <= '9')
     {
-        letterbuffer = InttoArray7x5(NumberArray7x5[letter - '0']);
+        letterbuffer = decompress7x5(Numbers7x5[letter - '0']);
     }
     else if (letter == ' ')
     {
