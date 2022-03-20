@@ -3,6 +3,8 @@
 #include "release.h"
 #include "numbers5x3.h"
 #include "font7x5.h"
+#include "words_german.h"
+#include "ntp.h"
 
 class Matrix
 {
@@ -25,6 +27,8 @@ public:
     void clear();
     uint16_t scrolling_text(const uint16_t, String &, const CRGB);
     void set_letter(const std::array<std::array<bool, 5>, 7>, const uint8_t, const uint8_t, const CRGB);
+    void set_word(const word, const CRGB color);
+    void set_time_in_words_german(const time_t, const CRGB);
 };
 
 inline CRGB bool_to_color(const bool, const CRGB);
