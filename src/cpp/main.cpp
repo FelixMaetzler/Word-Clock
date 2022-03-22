@@ -86,12 +86,12 @@ void setup()
 
   DEBUG_PRINT("It is: ");
   DEBUG_PRINT(Date_and_Time_to_String(time_and_date));
+  // time_t unix = 1648342790; //10 sec before Summertime 2022
+  // time_t unix = 1667091590; //10 sec before wintertime 2022
 }
-// time_t unix = 1648342790; //10 sec before Summertime 2022
-// time_t unix = 1667091590; //10 sec before wintertime 2022
-
 void loop()
 {
+
   // DONT TOUCH THE FOLLOWING BLOCK
   {
     noInterrupts();

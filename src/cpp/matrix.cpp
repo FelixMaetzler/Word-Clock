@@ -1,5 +1,11 @@
 #include "header/matrix.h"
 
+
+extern const std::array<uint64_t, 10> Numbers7x5;
+extern const std::array<uint16_t, 10> Numbers5x3;
+extern const std::array<uint64_t, 26> CapitalLetters7x5;
+extern const std::array<encode, 21> Words;
+
 /*
 standart constructor
 */
@@ -200,6 +206,7 @@ uint16_t Matrix::scrolling_text(const uint16_t framecounter, String &sentence, c
     }
     this->shift_Left();
     this->set_last_col(matrix_last_col);
+    return framecounter + 1;
 }
 /*
 this method sets one 7x5 character to the provided position in the provided color
@@ -258,108 +265,108 @@ void Matrix::set_time_in_words_german(const time_t t, const CRGB color)
     if (time.tm_min < 5)
     {
         // ES IST EINS
-        this->set_word(word::es, color);
-        this->set_word(word::ist, color);
+        this->set_word(wording::es, color);
+        this->set_word(wording::ist, color);
         this->set_word(int_to_word(hour), color);
     }
     else if (time.tm_min < 10)
     {
         // ES IST FÜNF NACH EINS
-        this->set_word(word::es, color);
-        this->set_word(word::ist, color);
-        this->set_word(word::fuenfX, color);
-        this->set_word(word::nach, color);
+        this->set_word(wording::es, color);
+        this->set_word(wording::ist, color);
+        this->set_word(wording::fuenfX, color);
+        this->set_word(wording::nach, color);
         this->set_word(int_to_word(hour), color);
     }
     else if (time.tm_min < 15)
     {
         // ES IST ZEHN NACH EINS
-        this->set_word(word::es, color);
-        this->set_word(word::ist, color);
-        this->set_word(word::zehnX, color);
-        this->set_word(word::nach, color);
+        this->set_word(wording::es, color);
+        this->set_word(wording::ist, color);
+        this->set_word(wording::zehnX, color);
+        this->set_word(wording::nach, color);
         this->set_word(int_to_word(hour), color);
     }
     else if (time.tm_min < 20)
     {
         // ES IST FÜNFZEHN NACH EINS
-        this->set_word(word::es, color);
-        this->set_word(word::ist, color);
-        this->set_word(word::fuenfX, color);
-        this->set_word(word::zehnX, color);
-        this->set_word(word::nach, color);
+        this->set_word(wording::es, color);
+        this->set_word(wording::ist, color);
+        this->set_word(wording::fuenfX, color);
+        this->set_word(wording::zehnX, color);
+        this->set_word(wording::nach, color);
         this->set_word(int_to_word(hour), color);
     }
     else if (time.tm_min < 25)
     {
         // ES IST ZEHN BIS HALB ZWEI
-        this->set_word(word::es, color);
-        this->set_word(word::ist, color);
-        this->set_word(word::zehnX, color);
-        this->set_word(word::bis, color);
+        this->set_word(wording::es, color);
+        this->set_word(wording::ist, color);
+        this->set_word(wording::zehnX, color);
+        this->set_word(wording::bis, color);
         this->set_word(int_to_word(hour + 1), color);
     }
     else if (time.tm_min < 30)
     {
         // ES IST FÜNF BIS HALB ZWEI
-        this->set_word(word::es, color);
-        this->set_word(word::ist, color);
-        this->set_word(word::fuenfX, color);
-        this->set_word(word::bis, color);
+        this->set_word(wording::es, color);
+        this->set_word(wording::ist, color);
+        this->set_word(wording::fuenfX, color);
+        this->set_word(wording::bis, color);
         this->set_word(int_to_word(hour + 1), color);
     }
     else if (time.tm_min < 35)
     {
         // ES IST HALB ZWEI
-        this->set_word(word::es, color);
-        this->set_word(word::ist, color);
-        this->set_word(word::halb, color);
+        this->set_word(wording::es, color);
+        this->set_word(wording::ist, color);
+        this->set_word(wording::halb, color);
         this->set_word(int_to_word(hour + 1), color);
     }
     else if (time.tm_min < 40)
     {
         // ES IST FÜNF NACH HALB ZWEI
-        this->set_word(word::es, color);
-        this->set_word(word::ist, color);
-        this->set_word(word::fuenfX, color);
-        this->set_word(word::nach, color);
+        this->set_word(wording::es, color);
+        this->set_word(wording::ist, color);
+        this->set_word(wording::fuenfX, color);
+        this->set_word(wording::nach, color);
         this->set_word(int_to_word(hour + 1), color);
     }
     else if (time.tm_min < 45)
     {
         // ES IST ZEHN NACH HALB ZWEI
-        this->set_word(word::es, color);
-        this->set_word(word::ist, color);
-        this->set_word(word::zehnX, color);
-        this->set_word(word::nach, color);
+        this->set_word(wording::es, color);
+        this->set_word(wording::ist, color);
+        this->set_word(wording::zehnX, color);
+        this->set_word(wording::nach, color);
         this->set_word(int_to_word(hour + 1), color);
     }
     else if (time.tm_min < 50)
     {
         // ES IST FÜNFZEHN BIS ZWEI
-        this->set_word(word::es, color);
-        this->set_word(word::ist, color);
-        this->set_word(word::fuenfX, color);
-        this->set_word(word::zehnX, color);
-        this->set_word(word::bis, color);
+        this->set_word(wording::es, color);
+        this->set_word(wording::ist, color);
+        this->set_word(wording::fuenfX, color);
+        this->set_word(wording::zehnX, color);
+        this->set_word(wording::bis, color);
         this->set_word(int_to_word(hour + 1), color);
     }
     else if (time.tm_min < 55)
     {
         // ES IST ZEHN BIS ZWEI
-        this->set_word(word::es, color);
-        this->set_word(word::ist, color);
-        this->set_word(word::zehnX, color);
-        this->set_word(word::bis, color);
+        this->set_word(wording::es, color);
+        this->set_word(wording::ist, color);
+        this->set_word(wording::zehnX, color);
+        this->set_word(wording::bis, color);
         this->set_word(int_to_word(hour + 1), color);
     }
     else
     {
         // ES IST FÜNF BIS ZWEI
-        this->set_word(word::es, color);
-        this->set_word(word::ist, color);
-        this->set_word(word::fuenfX, color);
-        this->set_word(word::bis, color);
+        this->set_word(wording::es, color);
+        this->set_word(wording::ist, color);
+        this->set_word(wording::fuenfX, color);
+        this->set_word(wording::bis, color);
         this->set_word(int_to_word(hour + 1), color);
     }
 }

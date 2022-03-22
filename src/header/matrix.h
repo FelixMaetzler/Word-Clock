@@ -6,6 +6,7 @@
 #include "words_german.h"
 #include "ntp.h"
 
+#pragma once
 class Matrix
 {
 private:
@@ -22,7 +23,7 @@ public:
     void set_LED(const CRGB, const uint8_t, const uint8_t);
     void matrix_to_LEDArray(CRGB *) const;
     void shift_Left();
-    constexpr void set_last_col(const std::array<CRGB, rowcount>);
+    void set_last_col(const std::array<CRGB, rowcount>);
     void set_digital_clock(const tm, const CRGB);
     void clear();
     uint16_t scrolling_text(const uint16_t, String &, const CRGB);
