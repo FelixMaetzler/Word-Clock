@@ -59,6 +59,7 @@ stores the LED-Matrix in an array
 is needed for the FastLED libary
 */
 CRGB leds[num_leds];
+extern NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip;
 
 /*
 This is the ISR, that get executed every second
@@ -88,9 +89,36 @@ void setup()
   DEBUG_PRINT(Date_and_Time_to_String(time_and_date));
   // time_t unix = 1648342790; //10 sec before Summertime 2022
   // time_t unix = 1667091590; //10 sec before wintertime 2022
+
+  strip.Begin();
+  strip.Show();
+  for (int i = 0; i < 300; i++)
+  {
+    strip.SetPixelColor(i, RgbColor(0,0,0));
+  }
+  strip.Show();
 }
+
 void loop()
 {
+  while(true){
+  for (uint8_t i = 0; i < 10; i++)
+  {
+    strip.SetPixelColor(i, RgbColor(20,20,20));
+    strip.Show();
+    strip.SetPixelColor(i, RgbColor(0,0,0));
+    delay(100);
+  }
+    for (uint8_t i = 8; i > 0; i--)
+  {
+    strip.SetPixelColor(i, RgbColor(20,20,20));
+    strip.Show();
+    strip.SetPixelColor(i, RgbColor(0,0,0));
+    delay(100);
+  }
+
+}
+  
 
   // DONT TOUCH THE FOLLOWING BLOCK
   {
