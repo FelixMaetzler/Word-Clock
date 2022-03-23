@@ -17,7 +17,7 @@ RgbColor Matrix::get_LED(const uint8_t row, const uint8_t col) const
     DEBUG(
         if (row >= rowcount || row < 0 || col >= colcount || col < 0) {
             DEBUG_PRINT("get_LED was called with wrong Parameters (Over or Unterflow");
-            return RgbColor();
+            return RgbColor(0);
         });
     return matrix.at(row).at(col);
 }
@@ -33,11 +33,11 @@ void Matrix::set_LED(const RgbColor led, const uint8_t row, const uint8_t col)
     this->matrix[row][col] = led;
 }
 /*
-converts the matrix in the LED array controlled by FastLed
+converts the matrix in the Neopixel Strip
 make sure that you choose the correct LED Layout in the release.h
 currenty available: Serpentines and Linebyline
 */
-void Matrix::matrix_to_LEDArray(RgbColor *leds) const
+void Matrix::matrix_to_LEDArray(NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod>* strip) const
 {
 #if SERPENTINES
     uint16_t i;
@@ -49,7 +49,8 @@ void Matrix::matrix_to_LEDArray(RgbColor *leds) const
             for (uint8_t col = 0; col < colcount; col++)
             {
                 i = row * colcount + col;
-                leds[i] = this->get_LED(row, col);
+                strip->SetPixelColor(i, this->get_LED(row, col));
+                
             }
         }
         else
@@ -59,7 +60,7 @@ void Matrix::matrix_to_LEDArray(RgbColor *leds) const
             for (uint8_t col = colcount - 1; col >= 0; col--)
             {
                 i = row * colcount + counter;
-                leds[i] = this->get_LED(row, col);
+                strip->SetPixelColor(i, this->get_LED(row, col));
                 counter++;
             }
         }
@@ -73,7 +74,7 @@ void Matrix::matrix_to_LEDArray(RgbColor *leds) const
         for (uint8_t col = 0; col < colcount; col++)
         {
             i = row * colcount + col;
-            leds[i] = this->get_LED(row, col);
+            strip->SetPixelColor(i, this->get_LED(row, col));
         }
     }
 #endif

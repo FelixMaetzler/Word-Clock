@@ -22,7 +22,7 @@ public:
 
     RgbColor get_LED(const uint8_t, const uint8_t) const;
     void set_LED(const RgbColor, const uint8_t, const uint8_t);
-    void matrix_to_LEDArray(RgbColor *) const;
+    void matrix_to_LEDArray(NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> *) const;
     void shift_Left();
     void set_last_col(const std::array<RgbColor, rowcount>);
     void set_digital_clock(const tm, const RgbColor);
