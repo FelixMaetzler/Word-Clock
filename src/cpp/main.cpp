@@ -58,7 +58,7 @@ time_t time_and_date = 0;
 stores the LED-Matrix in an array
 is needed for the FastLED libary
 */
-CRGB leds[num_leds];
+
 extern NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip;
 
 /*
@@ -94,31 +94,28 @@ void setup()
   strip.Show();
   for (int i = 0; i < 300; i++)
   {
-    strip.SetPixelColor(i, RgbColor(0,0,0));
+    strip.SetPixelColor(i, RgbColor(0, 0, 0));
   }
   strip.Show();
 }
 
 void loop()
 {
-  while(true){
+
   for (uint8_t i = 0; i < 10; i++)
   {
-    strip.SetPixelColor(i, RgbColor(20,20,20));
+    strip.SetPixelColor(i, RgbColor(20, 20, 20));
     strip.Show();
-    strip.SetPixelColor(i, RgbColor(0,0,0));
-    delay(100);
+    strip.SetPixelColor(i, RgbColor(0, 0, 0));
+    delay(200);
   }
-    for (uint8_t i = 8; i > 0; i--)
+  for (uint8_t i = 8; i > 0; i--)
   {
-    strip.SetPixelColor(i, RgbColor(20,20,20));
+    strip.SetPixelColor(i, RgbColor(20, 20, 20));
     strip.Show();
-    strip.SetPixelColor(i, RgbColor(0,0,0));
-    delay(100);
+    strip.SetPixelColor(i, RgbColor(0, 0, 0));
+    delay(200);
   }
-
-}
-  
 
   // DONT TOUCH THE FOLLOWING BLOCK
   {

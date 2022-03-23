@@ -1,4 +1,5 @@
-#include "FastLED.h"
+#include "NeoPixelBus.h"
+#include "NeoPixelAnimator.h"
 #include <vector>
 #include "release.h"
 #include "numbers5x3.h"
@@ -10,7 +11,7 @@
 class Matrix
 {
 private:
-    std::vector<std::vector<CRGB>> matrix;
+    std::vector<std::vector<RgbColor>> matrix;
 
 public:
     // Constructors
@@ -19,17 +20,17 @@ public:
 
     // Methodds
 
-    CRGB get_LED(const uint8_t, const uint8_t) const;
-    void set_LED(const CRGB, const uint8_t, const uint8_t);
-    void matrix_to_LEDArray(CRGB *) const;
+    RgbColor get_LED(const uint8_t, const uint8_t) const;
+    void set_LED(const RgbColor, const uint8_t, const uint8_t);
+    void matrix_to_LEDArray(RgbColor *) const;
     void shift_Left();
-    void set_last_col(const std::array<CRGB, rowcount>);
-    void set_digital_clock(const tm, const CRGB);
+    void set_last_col(const std::array<RgbColor, rowcount>);
+    void set_digital_clock(const tm, const RgbColor);
     void clear();
-    uint16_t scrolling_text(const uint16_t, String &, const CRGB);
-    void set_letter(const std::array<std::array<bool, 5>, 7>, const uint8_t, const uint8_t, const CRGB);
-    void set_word(const word, const CRGB color);
-    void set_time_in_words_german(const time_t, const CRGB);
+    uint16_t scrolling_text(const uint16_t, String &, const RgbColor);
+    void set_letter(const std::array<std::array<bool, 5>, 7>, const uint8_t, const uint8_t, const RgbColor);
+    void set_word(const word, const RgbColor color);
+    void set_time_in_words_german(const time_t, const RgbColor);
 };
 
-inline CRGB bool_to_color(const bool, const CRGB);
+inline RgbColor bool_to_color(const bool, const RgbColor);
