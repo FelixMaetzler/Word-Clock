@@ -127,11 +127,11 @@ void Matrix::set_digital_clock(const tm time, const RgbColor color)
             break;
         case 1:
             row_begin = const_row_begin + 0;
-            col_begin = const_col_begin + 7;
+            col_begin = const_col_begin + 6;
             break;
         case 2:
             row_begin = const_row_begin + 5;
-            col_begin = const_col_begin + 1;
+            col_begin = const_col_begin + 0;
             break;
         case 3:
             row_begin = const_row_begin + 5;

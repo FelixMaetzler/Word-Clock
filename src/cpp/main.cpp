@@ -71,8 +71,9 @@ void IRAM_ATTR onTime1s();
 void setup()
 {
   Serial.begin(115200);
-  ntp_setup();
   led_setup();
+  ntp_setup();
+
   timer1_attachInterrupt(onTime1s); // Add ISR Function
   timer1_enable(TIM_DIV16, TIM_EDGE, TIM_LOOP);
   timer1_write(5 * 1e6); // 1 sec
@@ -92,25 +93,28 @@ void setup()
   // time_t unix = 1648342790; //10 sec before Summertime 2022
   // time_t unix = 1667091590; //10 sec before wintertime 2022
 }
-
+uint8_t offset = 0;
 void loop()
 {
-
-  for (uint8_t i = 0; i < 10; i++)
-  {
-    strip.SetPixelColor(i, RgbColor(10, 0, 0));
-    strip.Show();
-    strip.SetPixelColor(i, RgbColor(0));
-    delay(100);
-  }
-  for (int8_t i = 9; i >= 0; i--)
-  {
-    strip.SetPixelColor(i, RgbColor(0, 0, 10));
-    strip.Show();
-    strip.SetPixelColor(i, RgbColor(0));
-    delay(100);
-  }
-
+  hue(&strip, 10, offset);
+  offset++;
+  delay(25);
+  /*
+    for (uint8_t i = 0; i < 10; i++)
+    {
+      strip.SetPixelColor(i, RgbColor(10, 0, 0));
+      strip.Show();
+      strip.SetPixelColor(i, RgbColor(0));
+      delay(100);
+    }
+    for (int8_t i = 9; i >= 0; i--)
+    {
+      strip.SetPixelColor(i, RgbColor(0, 0, 10));
+      strip.Show();
+      strip.SetPixelColor(i, RgbColor(0));
+      delay(100);
+    }
+  */
   // DONT TOUCH THE FOLLOWING BLOCK
   {
     noInterrupts();
@@ -195,8 +199,8 @@ void every_min()
     syncDatum(&time_and_date_isr);
   }
   matrix.clear();
- 
-  //matrix.set_LED(RgbColor(255), 0, 0);
+
+  // matrix.set_LED(RgbColor(255), 0, 0);
   matrix.set_digital_clock(Date_and_Time(time_and_date), RgbColor(10));
   matrix.debug_print();
   matrix.matrix_to_LEDArray(&strip);
