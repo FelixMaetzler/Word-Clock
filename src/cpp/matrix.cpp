@@ -37,7 +37,7 @@ converts the matrix in the Neopixel Strip
 make sure that you choose the correct LED Layout in the release.h
 currenty available: Serpentines and Linebyline
 */
-void Matrix::matrix_to_LEDArray(NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod>* strip) const
+void Matrix::matrix_to_LEDArray(NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> *strip) const
 {
 #if SERPENTINES
     uint16_t i;
@@ -50,7 +50,6 @@ void Matrix::matrix_to_LEDArray(NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod>* st
             {
                 i = row * colcount + col;
                 strip->SetPixelColor(i, this->get_LED(row, col));
-                
             }
         }
         else
@@ -113,13 +112,13 @@ void Matrix::set_digital_clock(const tm time, const RgbColor color)
     const uint8_t min_ones_digit = time.tm_min % 10;
     const std::array<uint8_t, 4> array{{hour_tens_digit, hour_ones_digit, min_tens_digit, min_ones_digit}};
     constexpr uint8_t const_row_begin = 0;
-    constexpr uint8_t const_col_begin = 2;
+    constexpr uint8_t const_col_begin = 0;
     uint8_t row_begin;
     uint8_t col_begin;
 
     for (uint8_t i = 0; i < 4; i++)
     {
-        auto number = decompress5x3(Numbers5x3[array[i]]);
+        auto number = decompress5x3(array[i]);
         switch (i)
         {
         case 0:
@@ -145,7 +144,7 @@ void Matrix::set_digital_clock(const tm time, const RgbColor color)
             for (uint8_t col = col_begin; col < col_begin + 3; col++)
             {
                 bool OnOff = number[row - row_begin][col - col_begin];
-                bool_to_color(OnOff, color);
+                this->set_LED(bool_to_color(OnOff, color), row, col);
             }
         }
     }
@@ -226,7 +225,7 @@ void Matrix::set_letter(const std::array<std::array<bool, 5>, 7> letter, const u
 }
 /*
 this is a helper function
-it retuns RgbColor::Black if x is false and color if x is true
+it retuns RgbColor(0) if x is false and color if x is true
 */
 inline RgbColor bool_to_color(const bool x, const RgbColor color)
 {
@@ -369,4 +368,35 @@ void Matrix::set_time_in_words_german(const time_t t, const RgbColor color)
         this->set_word(wording::bis, color);
         this->set_word(int_to_word(hour + 1), color);
     }
+}
+/*
+converts the matrix to a String
+*/
+String Matrix::to_string() const
+{
+    String string = "";
+    for (uint8_t row = 0; row < rowcount; row++)
+    {
+        for (uint8_t col = 0; col < colcount; col++)
+        {
+            if ((this->get_LED(row, col)).CalculateBrightness())
+            {
+                string += " * ";
+            }
+            else
+            {
+                string += "   ";
+            }
+        }
+        string += "\n";
+    }
+    return string;
+}
+/*
+Uses the DEBUG_PRINT() define to print the matrix onto the console
+If the Debug modus in release is deactivated, this function does nothing
+*/
+void Matrix::debug_print() const
+{
+    DEBUG_PRINT(this->to_string());
 }

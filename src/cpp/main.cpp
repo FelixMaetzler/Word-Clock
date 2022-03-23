@@ -6,6 +6,8 @@
 #include "header/ntp.h"
 #include "header/matrix.h"
 
+Matrix matrix;
+
 // this variables get set every sec/min/h/d
 // because of this, youc can do things every sec/min/h/d in the loop()
 
@@ -96,17 +98,17 @@ void loop()
 
   for (uint8_t i = 0; i < 10; i++)
   {
-    strip.SetPixelColor(i, RgbColor(20));
+    strip.SetPixelColor(i, RgbColor(10, 0, 0));
     strip.Show();
     strip.SetPixelColor(i, RgbColor(0));
-    delay(200);
+    delay(100);
   }
-  for (uint8_t i = 8; i > 0; i--)
+  for (int8_t i = 9; i >= 0; i--)
   {
-    strip.SetPixelColor(i, RgbColor(20));
+    strip.SetPixelColor(i, RgbColor(0, 0, 10));
     strip.Show();
     strip.SetPixelColor(i, RgbColor(0));
-    delay(200);
+    delay(100);
   }
 
   // DONT TOUCH THE FOLLOWING BLOCK
@@ -192,6 +194,13 @@ void every_min()
   {
     syncDatum(&time_and_date_isr);
   }
+  matrix.clear();
+ 
+  //matrix.set_LED(RgbColor(255), 0, 0);
+  matrix.set_digital_clock(Date_and_Time(time_and_date), RgbColor(10));
+  matrix.debug_print();
+  matrix.matrix_to_LEDArray(&strip);
+  strip.Show();
 }
 /*
 gets executed roughly every hour

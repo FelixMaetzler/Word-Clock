@@ -61,7 +61,7 @@ constexpr auto nine5x3 = std::array<std::array<bool, 3>, 5>{
      {0, 0, 1},
      {1, 1, 1}}};
 
-     /*
+/*
 Helperfunction to compress a 5x3 7-Segment number into an int
 this way you store the information in 2 Byte instead of 15
 it is constexpr, because the compression is done at Compiletime
@@ -79,30 +79,7 @@ constexpr uint16_t compress5x3(const std::array<std::array<bool, 3>, 5> array)
     }
     return number;
 }
-/*
-this Function decompresses the 5x3 7-Segment number
-this is done at runtime
-*/
-std::array<std::array<bool, 3>, 5> decompress5x3(const uint16_t number)
-{
-    auto new_number = number;
-    std::array<std::array<bool, 3>, 5> array;
-    std::array<bool, 15> test;
-    for (uint8_t i = 14; i >= 0; i--)
-    {
-        bool rest = new_number % 2;
-        new_number /= 2;
-        test[i] = rest;
-    }
-    for (uint8_t row = 0; row < 5; row++)
-    {
-        for (uint8_t col = 0; col < 3; col++)
-        {
-            array.at(row).at(col) = test[row * 3 + col];
-        }
-    }
-    return array;
-}
+
 /*
 this function wraps all 10 5x3 7-Segment Digits into one big int array
 this is done at compiletime
@@ -127,3 +104,34 @@ This is the Array for all 10 5x3 7-Segment Digits in int form
 this is done at compiletime
 */
 constexpr const auto Numbers5x3 = compress5x3();
+
+/*
+this Function decompresses the 5x3 7-Segment number
+this is done at runtime
+*/
+std::array<std::array<bool, 3>, 5> decompress5x3(const uint16_t number)
+{
+    auto new_number = Numbers5x3[number];
+    
+    std::array<std::array<bool, 3>, 5> array;
+    
+    std::array<bool, 15> test;
+    for (int8_t i = 14; i >= 0; i--)
+    {
+        bool rest = new_number % 2;
+        new_number /= 2;
+        
+        test[i] = rest;
+    }
+    
+    for (uint8_t row = 0; row < 5; row++)
+    {
+        for (uint8_t col = 0; col < 3; col++)
+        {
+            array.at(row).at(col) = test[row * 3 + col];
+        }
+    }
+
+    return array;
+    
+}
