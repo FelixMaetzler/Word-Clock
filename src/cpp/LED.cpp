@@ -1,23 +1,42 @@
 #include "header/LED.h"
 
-NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip(num_leds);
-void led_setup()
+/*
+shows the LEDs
+*/
+void Strip::show()
 {
-    strip.Begin();
-    strip.Show();
+    this->strip.Show();
+}
+/*
+sets the i-th LED to a spezific color
+*/
+void Strip::set_led(uint16_t index, RGB color)
+{
+    strip.SetPixelColor(index, color.convert());
+}
+/*
+cycles through the hue color
+begin_index
+led_count
+offset: coloroffset for the cycle
+*/
+void Strip::rainbow(uint16_t begin_index, uint16_t led_count, uint8_t offset)
+{
+    for (uint16_t i = begin_index; i < begin_index + led_count; i++)
+    {
+        this->set_led(i, HSL(i * 10 + offset, 255, 10));
+    }
+}
+/*
+initiates the LED Strip
+*/
+void Strip::begin()
+{
+    this->strip.Begin();
+    this->strip.Show();
     for (int i = 0; i < 300; i++) // to do
     {
-        strip.SetPixelColor(i, RgbColor(0));
+        this->set_led(i, RGB(0, 0, 0));
     }
-    strip.Show();
+    this->strip.Show();
 }
-void hue(NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> *strip, const uint8_t count, const uint8_t offset)
-{
-    for (uint8_t i = 0; i < count; i++)
-    {
-        strip->SetPixelColor(i, HsbColor(map((i+offset)%256), 1, map(2)));
-    }
-    strip->Show();
-}
-
-

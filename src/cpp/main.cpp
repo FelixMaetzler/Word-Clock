@@ -6,6 +6,7 @@
 #include "header/ntp.h"
 #include "header/matrix.h"
 
+
 Matrix matrix;
 
 // this variables get set every sec/min/h/d
@@ -61,7 +62,7 @@ stores the LED-Matrix in an array
 is needed for the FastLED libary
 */
 
-extern NeoPixelBus<NeoGrbFeature, Neo800KbpsMethod> strip;
+Strip strip;
 
 /*
 This is the ISR, that get executed every second
@@ -71,9 +72,8 @@ void IRAM_ATTR onTime1s();
 void setup()
 {
   Serial.begin(115200);
-  led_setup();
   ntp_setup();
-
+strip.begin();
   timer1_attachInterrupt(onTime1s); // Add ISR Function
   timer1_enable(TIM_DIV16, TIM_EDGE, TIM_LOOP);
   timer1_write(5 * 1e6); // 1 sec
@@ -96,7 +96,8 @@ void setup()
 uint8_t offset = 0;
 void loop()
 {
-  hue(&strip, 10, offset);
+  strip.rainbow(0, 24, offset);
+  strip.show();
   offset++;
   delay(25);
   /*
@@ -156,8 +157,6 @@ void loop()
     interrupts();
   }
   // UNTIL HERE
-
-  delay(100);
 }
 // HW Timer1 Interrupt. Gets executed every second
 void IRAM_ATTR onTime1s()
@@ -201,10 +200,10 @@ void every_min()
   matrix.clear();
 
   // matrix.set_LED(RgbColor(255), 0, 0);
-  matrix.set_digital_clock(Date_and_Time(time_and_date), RgbColor(10));
+  matrix.set_digital_clock(Date_and_Time(time_and_date), RGB(10));
   matrix.debug_print();
-  matrix.matrix_to_LEDArray(&strip);
-  strip.Show();
+  matrix.matrix_to_LEDArray(&strip);//to to;
+  strip.show();
 }
 /*
 gets executed roughly every hour
