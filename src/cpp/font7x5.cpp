@@ -289,10 +289,10 @@ constexpr auto nine7x5 = std::array<std::array<bool, 5>, 7>{
      {0, 0, 0, 0, 1},
      {0, 0, 0, 0, 1}}};
 
-     /*
+/*
 Helperfunction to compress a 7x5 Pixelarray into an int
 this way you store the Information in 8 Byte instead of 35
-it is constexpr, because the compression is done at Compiletime
+It is constexpr, because the compression is done at Compiletime
 */
 constexpr uint64_t compress7x5(const std::array<std::array<bool, 5>, 7> array)
 {
@@ -395,4 +395,3 @@ zero is stored at index 0 etc
 this variable is computed at compiletime
 */
 constexpr auto CapitalLetters7x5 = compressCapitalLetters7x5();
-

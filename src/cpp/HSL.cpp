@@ -63,14 +63,14 @@ HSL::HSL(const RGB rgb)
 {
     // https://en.wikipedia.org/wiki/HSL_and_HSV
 
-    const double r = rgb.get_r() / 255.0;
-    const double g = rgb.get_g() / 255.0;
-    const double b = rgb.get_b() / 255.0;
+    const double r = rgb.get_r() / 255.0; // R value scaled from 0 to 1
+    const double g = rgb.get_g() / 255.0; // G value scaled from 0 to 1
+    const double b = rgb.get_b() / 255.0; // B value scaled from 0 to 1
 
-    const double xmin = min(r, min(g, b));
-    const double v = max(r, max(g, b));
-    const double c = v - xmin;
-    const double l = 0.5 * (v + xmin);
+    const double xmin = min(r, min(g, b)); // lowest RGB value from 0 to 1
+    const double v = max(r, max(g, b));    // highest RGB value from 0 to 1
+    const double c = v - xmin;             // difference Between the highest and lowest RGB value from 0 to 1
+    const double l = 0.5 * (v + xmin);     // mean between the lowest and highest value from 0 to 1
     double h = 0;
     double s = 0;
     if (v == r)
@@ -89,9 +89,9 @@ HSL::HSL(const RGB rgb)
     {
         s = (v - l) / min(l, 1 - l);
     }
-    this->h = (h / 360.0) * 255.0;
-    this->s = s * 255.0;
-    this->l = l * 255.0;
+    this->h = h * (255.0 / 360.0); // scaling from 0 to 255
+    this->s = s * 255.0;           // scaling from 0 to 255
+    this->l = l * 255.0;           // scaling from 0 to 255
 }
 /*
 This function converts the HSL value to an NEopixel HSL Color

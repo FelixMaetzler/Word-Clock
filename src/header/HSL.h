@@ -5,9 +5,9 @@
 class RGB;
 class HSL
 {
-    uint8_t h;
-    uint8_t s;
-    uint8_t l;
+    uint8_t h; // Hue
+    uint8_t s; // Saturation
+    uint8_t l; // Lightnss
 
 public:
     HSL(uint8_t, uint8_t, uint8_t);
