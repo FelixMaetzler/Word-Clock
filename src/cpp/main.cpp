@@ -158,7 +158,7 @@ void IRAM_ATTR onTime10ms()
 {
   every_10Ms = true;
   counter10ms++;
-  if (counter10ms == 99)
+  if (counter10ms == 100)
   {
     counter10ms = 0;
     time_and_date_isr++; // count one second
