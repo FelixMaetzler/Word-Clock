@@ -36,7 +36,7 @@ void Strip::begin()
     this->strip.Show();
     for (int i = 0; i < 300; i++) // to do
     {
-        this->set_led(i, RGB(0, 0, 0));
+        this->set_led(i, RGB(0));
     }
     this->strip.Show();
 }

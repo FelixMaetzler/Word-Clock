@@ -6,12 +6,17 @@
 #include "header/ntp.h"
 #include "header/matrix.h"
 
-
 Matrix matrix;
 
 // this variables get set every sec/min/h/d
 // because of this, youc can do things every sec/min/h/d in the loop()
-
+volatile uint8_t counter10ms = 0;
+/*
+DONT USE THIS VARIABLE!!!
+get set every second
+Use every_10ms() instead
+*/
+volatile bool every_10Ms = false;
 /*
 DONT USE THIS VARIABLE!!!
 get set every second
@@ -39,6 +44,7 @@ volatile bool every_D = false;
 
 // function declaration
 
+void every_10ms();
 void every_sec();
 void every_min();
 void every_hour();
@@ -67,16 +73,16 @@ Strip strip;
 /*
 This is the ISR, that get executed every second
 */
-void IRAM_ATTR onTime1s();
+void IRAM_ATTR onTime10ms();
 
 void setup()
 {
   Serial.begin(115200);
   ntp_setup();
-strip.begin();
-  timer1_attachInterrupt(onTime1s); // Add ISR Function
+  strip.begin();
+  timer1_attachInterrupt(onTime10ms); // Add ISR Function
   timer1_enable(TIM_DIV16, TIM_EDGE, TIM_LOOP);
-  timer1_write(5 * 1e6); // 1 sec
+  timer1_write(5 * 1e4); // 10 ms
   // this loop tries to get the latest time and date
   do
   {
@@ -96,30 +102,19 @@ strip.begin();
 uint8_t offset = 0;
 void loop()
 {
-  strip.rainbow(0, 24, offset);
-  strip.show();
-  offset++;
-  delay(25);
-  /*
-    for (uint8_t i = 0; i < 10; i++)
-    {
-      strip.SetPixelColor(i, RgbColor(10, 0, 0));
-      strip.Show();
-      strip.SetPixelColor(i, RgbColor(0));
-      delay(100);
-    }
-    for (int8_t i = 9; i >= 0; i--)
-    {
-      strip.SetPixelColor(i, RgbColor(0, 0, 10));
-      strip.Show();
-      strip.SetPixelColor(i, RgbColor(0));
-      delay(100);
-    }
-  */
+
   // DONT TOUCH THE FOLLOWING BLOCK
   {
     noInterrupts();
-    if (every_Sec)
+    if (every_10Ms)
+    {
+      every_10Ms = false;
+      interrupts();
+      // gets executed roughly every 10 ms
+      every_10ms();
+    }
+    noInterrupts();
+    if (every_Sec && !every_10Ms)
     {
       every_Sec = false;
       time_and_date = time_and_date_isr;
@@ -128,7 +123,7 @@ void loop()
       every_sec();
     }
     noInterrupts();
-    if (every_Min && !every_Sec)
+    if (every_Min && !every_10Ms && !every_Sec)
     {
       every_Min = false;
       interrupts();
@@ -137,7 +132,7 @@ void loop()
       every_min();
     }
     noInterrupts();
-    if (every_H && !every_Sec && !every_Min)
+    if (every_H && !every_10Ms && !every_Sec && !every_Min)
     {
       every_H = false;
       interrupts();
@@ -146,7 +141,7 @@ void loop()
       every_hour();
     }
     noInterrupts();
-    if (every_D && !every_H && !every_Sec && !every_Min)
+    if (every_D && !every_10Ms && !every_H && !every_Sec && !every_Min)
     {
       every_D = false;
       interrupts();
@@ -159,22 +154,39 @@ void loop()
   // UNTIL HERE
 }
 // HW Timer1 Interrupt. Gets executed every second
-void IRAM_ATTR onTime1s()
+void IRAM_ATTR onTime10ms()
 {
-  time_and_date_isr++; // count one second
-  every_Sec = true;
-  if (time_and_date_isr % 60 == 0)
+  every_10Ms = true;
+  counter10ms++;
+  if (counter10ms == 99)
   {
-    every_Min = true;
-    if (time_and_date_isr % (60 * 60) == 0)
+    counter10ms = 0;
+    time_and_date_isr++; // count one second
+    every_Sec = true;
+    if (time_and_date_isr % 60 == 0)
     {
-      every_H = true;
-      if (time_and_date_isr % (60 * 60 * 24) == 0)
+      every_Min = true;
+      if (time_and_date_isr % (60 * 60) == 0)
       {
-        every_D = true;
+        every_H = true;
+        if (time_and_date_isr % (60 * 60 * 24) == 0)
+        {
+          every_D = true;
+        }
       }
     }
   }
+}
+/*
+gets executed roughly every 10 ms
+Note: if the project is too busy, it can happen,
+that single 10ms can be skipped.
+*/
+void every_10ms()
+{
+  strip.rainbow(0, 24, offset);
+  strip.show();
+  offset++;
 }
 /*
 gets executed roughly every second
@@ -202,7 +214,7 @@ void every_min()
   // matrix.set_LED(RgbColor(255), 0, 0);
   matrix.set_digital_clock(Date_and_Time(time_and_date), RGB(10));
   matrix.debug_print();
-  matrix.matrix_to_LEDArray(&strip);//to to;
+  matrix.matrix_to_LEDArray(&strip); // to to;
   strip.show();
 }
 /*
