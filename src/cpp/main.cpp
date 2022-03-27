@@ -6,6 +6,10 @@
 #include "header/ntp.h"
 #include "header/matrix.h"
 
+#include "header/webserver.h"
+
+uint8_t offset = 0;
+uint8_t led_count = 15;
 Matrix matrix;
 
 // this variables get set every sec/min/h/d
@@ -75,10 +79,14 @@ This is the ISR, that get executed every second
 */
 void IRAM_ATTR onTime10ms();
 
+String ledState;
+
 void setup()
 {
   Serial.begin(115200);
   ntp_setup();
+  webserver_Setup();
+
   strip.begin();
   timer1_attachInterrupt(onTime10ms); // Add ISR Function
   timer1_enable(TIM_DIV16, TIM_EDGE, TIM_LOOP);
@@ -99,7 +107,7 @@ void setup()
   // time_t unix = 1648342790; //10 sec before Summertime 2022
   // time_t unix = 1667091590; //10 sec before wintertime 2022
 }
-uint8_t offset = 0;
+
 void loop()
 {
 
@@ -184,7 +192,7 @@ that single 10ms can be skipped.
 */
 void every_10ms()
 {
-  strip.rainbow(0, 24, offset);
+  strip.rainbow(0, led_count, offset);
   strip.show();
   offset++;
 }
