@@ -1,15 +1,13 @@
 #include "header/release.h"
 
 #include <Arduino.h>
-#include <FS.h>
+
 #include "header/LED.h"
 #include "header/ntp.h"
 #include "header/matrix.h"
-#include "LittleFS.h"
-#include <ESPAsyncTCP.h>
-#include <ESPAsyncWebServer.h>
 
-AsyncWebServer server(80);
+#include "header/webserver.h"
+
 uint8_t offset = 0;
 uint8_t led_count = 15;
 Matrix matrix;
@@ -83,55 +81,11 @@ void IRAM_ATTR onTime10ms();
 
 String ledState;
 
-String processor(const String& var){
-  Serial.println(var);
-  if(var == "GPIO_STATE"){
-    if(!led_count){
-      ledState = "OFF";
-    }
-    else{
-      ledState = "ON";
-    }
-    Serial.print(ledState);
-    return ledState;
-  }
-  return String();
-}
-
 void setup()
 {
   Serial.begin(115200);
-      ntp_setup();
-     if(!LittleFS.begin()){
-    Serial.println("An Error has occurred while mounting LittleFS");
-    return;
-  }
-// Route for root / web page
-  server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(LittleFS, "/index.html", String(), false, processor);
-  });
-  
-  // Route to load style.css file
-  server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request){
-    request->send(LittleFS, "/style.css", "text/css");
-  });
-
-  // Route to set GPIO to HIGH
-  server.on("/led2on", HTTP_GET, [](AsyncWebServerRequest *request){
-    led_count = 15;   
-    request->send(LittleFS, "/index.html", String(), false, processor);
-  });
-  
-  // Route to set GPIO to LOW
-  server.on("/led2off", HTTP_GET, [](AsyncWebServerRequest *request){
-    led_count = 0;
-    strip.clear();
-    request->send(LittleFS, "/index.html", String(), false, processor);
-  });
-
-  // Start server
-  server.begin();
-
+  ntp_setup();
+  webserver_Setup();
 
   strip.begin();
   timer1_attachInterrupt(onTime10ms); // Add ISR Function
