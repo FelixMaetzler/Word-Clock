@@ -20,6 +20,7 @@ Strip() : strip(num_leds){};
     void begin();
     void set_led(uint16_t, RGB);
     void rainbow(uint16_t, uint16_t, uint8_t);
+    void clear();
 };
 
 void led_setup();

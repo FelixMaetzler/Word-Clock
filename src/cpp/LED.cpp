@@ -40,3 +40,10 @@ void Strip::begin()
     }
     this->strip.Show();
 }
+void Strip::clear(){
+    for (uint16_t i = 0; i < num_leds; i++)
+    {
+        this->strip.ClearTo(RGB(0).convert(), 0, num_leds - 1);
+    }
+    
+}
