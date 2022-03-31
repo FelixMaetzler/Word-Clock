@@ -34,7 +34,7 @@ void ntp_setup()
   while (WiFi.status() != WL_CONNECTED)
   {
     delay(500);
-    Serial.print(".");
+    DEBUG(Serial.print("."););
   }
   DEBUG_PRINT("");
 
@@ -44,7 +44,7 @@ void ntp_setup()
 
   DEBUG_PRINT("Starting UDP");
   udp.begin(localPort);
-  Serial.print("Local port: ");
+  DEBUG_PRINT("Local port: ");
   DEBUG_PRINT(udp.localPort());
 }
 /*

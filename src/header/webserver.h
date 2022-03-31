@@ -2,6 +2,7 @@
 #include "LittleFS.h"
 #include <ESPAsyncTCP.h>
 #include <ESPAsyncWebServer.h>
+#include "release.h"
 
 #include "LED.h"
 

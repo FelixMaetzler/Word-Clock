@@ -14,9 +14,16 @@
         <div class="card">
   <p><i class="fas fa-lightbulb fa-2x" style="color:#fbff00;"></i> <strong>LED Strip</strong></p>
   <p>LED Strip state: <strong> %GPIO_STATE%</strong></p>
+  <p>Test: <strong> %TEST_VAR%</strong></p>
   <p>
   <a href="/led2on"><button class="button">ON</button></a>
   <a href="/led2off"><button class="button button2">OFF</button></a></p>
+  <p>
+    <form action="/get">
+      input1: <input type="number" name="input1" min="0" max="100">
+      <input type="submit" value="Submit">
+    </form><br>
+  </p>
   </div>
   </div>
   </div>

@@ -1,10 +1,11 @@
 #include "header/webserver.h"
 
 AsyncWebServer server(80);
+const char *PARAM_INPUT_1 = "input1";
 
 String processor(const String &var)
 {
-    Serial.println(var);
+     DEBUG_PRINT(var);
     if (var == "GPIO_STATE")
     {
         if (!led_count)
@@ -15,8 +16,12 @@ String processor(const String &var)
         {
             ledState = "ON";
         }
-        Serial.print(ledState);
+        DEBUG_PRINT("LED Strip status: " + ledState);
         return ledState;
+    }
+    if(var == "TEST_VAR"){
+        DEBUG_PRINT("Test: " + String(led_count));
+        return String(led_count);
     }
     return String();
 }
@@ -24,7 +29,7 @@ void webserver_Setup()
 {
     if (!LittleFS.begin())
     {
-        Serial.println("An Error has occurred while mounting LittleFS");
+        DEBUG_PRINT("An Error has occurred while mounting LittleFS");
         return;
     }
     // Route for root / web page
@@ -47,6 +52,20 @@ void webserver_Setup()
     led_count = 0;
     strip.clear();
     request->send(LittleFS, "/index.html", String(), false, processor); });
+
+    server.on("/get", HTTP_GET, [](AsyncWebServerRequest *request)
+              {
+    String inputMessage;
+    String inputParam;
+    // GET input1 value on <ESP_IP>/get?input1=<inputMessage>
+    if (request->hasParam(PARAM_INPUT_1)) {
+      inputMessage = request->getParam(PARAM_INPUT_1)->value();
+      inputParam = PARAM_INPUT_1;
+      led_count = inputMessage.toInt();
+      strip.clear();
+      DEBUG_PRINT("LEDCount: " + String(led_count));
+    request->send(LittleFS, "/index.html", String(), false, processor);
+    } });
 
     // Start server
     server.begin();
