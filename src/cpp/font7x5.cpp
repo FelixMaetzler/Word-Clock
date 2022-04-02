@@ -308,30 +308,6 @@ constexpr uint64_t compress7x5(const std::array<std::array<bool, 5>, 7> array)
     return number;
 }
 /*
-this Function decompresses the 7x5 pixel array
-this is done at runtime
-*/
-std::array<std::array<bool, 5>, 7> decompress7x5(const uint64_t number)
-{
-    auto new_number = number;
-    std::array<std::array<bool, 5>, 7> array;
-    std::array<bool, 35> test;
-    for (uint8_t i = 34; i >= 0; i--)
-    {
-        bool rest = new_number % 2;
-        new_number /= 2;
-        test[i] = rest;
-    }
-    for (uint8_t row = 0; row < 7; row++)
-    {
-        for (uint8_t col = 0; col < 5; col++)
-        {
-            array.at(row).at(col) = test[row * 5 + col];
-        }
-    }
-    return array;
-}
-/*
 this function wraps all 26 7x5 capital letter into one big int array
 this is done at compiletime
 */
@@ -395,3 +371,31 @@ zero is stored at index 0 etc
 this variable is computed at compiletime
 */
 constexpr auto CapitalLetters7x5 = compressCapitalLetters7x5();
+
+/*
+this Function decompresses the 7x5 pixel array
+this is done at runtime
+*/
+std::array<std::array<bool, 5>, 7> decompress7x5(const uint64_t number)
+{
+    //Here is missing the numbers
+    //FIX!!!
+
+    auto new_number = CapitalLetters7x5[number];
+    std::array<std::array<bool, 5>, 7> array;
+    std::array<bool, 35> test;
+    for (int8_t i = 34; i >= 0; i--)
+    {
+        bool rest = new_number % 2;
+        new_number /= 2;
+        test[i] = rest;
+    }
+    for (uint8_t row = 0; row < 7; row++)
+    {
+        for (uint8_t col = 0; col < 5; col++)
+        {
+            array.at(row).at(col) = test[row * 5 + col];
+        }
+    }
+    return array;
+}

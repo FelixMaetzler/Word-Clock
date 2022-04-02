@@ -174,21 +174,22 @@ uint16_t Matrix::scrolling_text(const uint16_t framecounter, String &sentence, c
     const uint8_t letterIndex = framecounter / 6;
     const uint8_t letterColIndex = framecounter % 6;
     const char letter = sentence.charAt(letterIndex);
+    DEBUG_PRINT(letter);
     std::array<RGB, rowcount> matrix_last_col;
     matrix_last_col.fill(RGB(0));
     constexpr uint8_t start = (rowcount / 2) - 3;
-    std::array<std::array<bool, 5>, 7> letterbuffer;
+    std::array<std::array<bool, 5>, 7> letterbuffer = {0, 0, 0, 0, 0, 0, 0};
     if (letterColIndex == 5)
     {
         // you need an emty col
     }
     else if ('A' <= letter && letter <= 'Z')
     {
-        letterbuffer = decompress7x5(CapitalLetters7x5[letter - 'A']);
+        letterbuffer = decompress7x5(letter - 'A');
     }
     else if ('0' <= letter && letter <= '9')
     {
-        letterbuffer = decompress7x5(Numbers7x5[letter - '0']);
+        letterbuffer = decompress7x5(letter - '0');
     }
     else if (letter == ' ')
     {
@@ -201,20 +202,28 @@ uint16_t Matrix::scrolling_text(const uint16_t framecounter, String &sentence, c
 
     for (uint8_t i = start; i < start + 7; i++)
     {
-        matrix_last_col[i] = bool_to_color(letterbuffer[i][4], color);
+        matrix_last_col[i] = bool_to_color(letterbuffer[i - start][letterColIndex], color);
     }
     this->shift_Left();
     this->set_last_col(matrix_last_col);
-    return framecounter + 1;
+    if (framecounter == 6 * sentence.length())
+    {
+        return 0;
+    }
+    else
+    {
+        return framecounter + 1;
+    }
 }
 /*
 this method sets one 7x5 character to the provided position in the provided color
 */
-void Matrix::set_letter(const std::array<std::array<bool, 5>, 7> letter, const uint8_t rowStart, const uint8_t colStart, const RGB color)
+void Matrix::set_letter(const char character, const uint8_t rowStart, const uint8_t colStart, const RGB color)
 {
     DEBUG(if (rowStart + 5 >= rowcount || rowStart < 0 || colStart < 0 || colStart + 7 >= colcount) {
         DEBUG_PRINT("set_letter has not allowed indizies (Over or Underflow");
     });
+    auto letter = decompress7x5(character - 'A');
     for (uint8_t row = rowStart; row < rowStart + 7; row++)
     {
         for (uint8_t col = colStart; col < colStart + 5; col++)

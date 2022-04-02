@@ -9,6 +9,7 @@
 #include "header/webserver.h"
 
 uint8_t offset = 0;
+uint16_t counter = 0;
 uint8_t led_count = 15;
 Matrix matrix;
 
@@ -192,8 +193,15 @@ that single 10ms can be skipped.
 */
 void every_10ms()
 {
-  strip.rainbow(0, led_count, offset);
-  strip.show();
+  if (offset == 25)
+  {
+    offset = 0;
+    String string = "FEIERABEND";
+    counter = matrix.scrolling_text(counter, string, RGB(50, 0, 0));
+    matrix.debug_print();
+    matrix.matrix_to_LEDArray(&strip);
+    strip.show();
+  }
   offset++;
 }
 /*
@@ -203,6 +211,17 @@ that single seconds can be skiped.
 */
 void every_sec()
 {
+
+  /*
+  matrix.clear();
+  matrix.set_letter('A' + counter, 0,0,RGB(10,0,0));
+  counter++;
+  if(counter > 25){
+    counter = 0;
+  }
+  matrix.matrix_to_LEDArray(&strip);
+  strip.show();
+  */
 }
 /*
 gets executed roughly every minute
@@ -220,9 +239,9 @@ void every_min()
   matrix.clear();
 
   // matrix.set_LED(RgbColor(255), 0, 0);
-  //matrix.set_digital_clock(Date_and_Time(time_and_date), std::array<RGB, 4> {RGB(10,0,0), RGB(0,10,0), RGB(0,0,10), RGB(10)});
+  // matrix.set_digital_clock(Date_and_Time(time_and_date), std::array<RGB, 4> {RGB(10,0,0), RGB(0,10,0), RGB(0,0,10), RGB(10)});
   matrix.set_digital_clock(Date_and_Time(time_and_date));
-  
+
   matrix.debug_print();
   matrix.matrix_to_LEDArray(&strip); // to to;
   strip.show();

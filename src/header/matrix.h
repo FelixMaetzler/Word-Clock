@@ -28,7 +28,7 @@ public:
     void set_digital_clock(const tm, const std::array<RGB, 4> color = {RGB(10,0,0), RGB(0,10,0), RGB(0,0,10), RGB(10,0,10)});
     void clear();
     uint16_t scrolling_text(const uint16_t, String &, const RGB);
-    void set_letter(const std::array<std::array<bool, 5>, 7>, const uint8_t, const uint8_t, const RGB);
+    void set_letter(const char, const uint8_t, const uint8_t, const RGB);
     void set_word(const word, const RGB color);
     void set_time_in_words_german(const time_t, const RGB);
     String to_string() const;
