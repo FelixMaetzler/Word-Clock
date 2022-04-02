@@ -6,7 +6,7 @@
 #include "release.h"
 #include "stdlib.h"
 #pragma once
-constexpr uint16_t num_leds = rowcount * colcount;
+constexpr uint16_t num_leds = rowcount * colcount + 4;
 constexpr uint8_t led_pin = 6;
 
 class Strip

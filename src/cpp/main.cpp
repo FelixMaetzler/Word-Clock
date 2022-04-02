@@ -220,7 +220,9 @@ void every_min()
   matrix.clear();
 
   // matrix.set_LED(RgbColor(255), 0, 0);
-  matrix.set_digital_clock(Date_and_Time(time_and_date), RGB(10));
+  //matrix.set_digital_clock(Date_and_Time(time_and_date), std::array<RGB, 4> {RGB(10,0,0), RGB(0,10,0), RGB(0,0,10), RGB(10)});
+  matrix.set_digital_clock(Date_and_Time(time_and_date));
+  
   matrix.debug_print();
   matrix.matrix_to_LEDArray(&strip); // to to;
   strip.show();

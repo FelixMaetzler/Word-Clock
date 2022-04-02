@@ -39,7 +39,7 @@ if the LEDs are connected like:
 |
 8 -- 9 -- ...
 */
-#define SERPENTINES false
+#define SERPENTINES true
 
 /*
 if the LEDs are connected like:
@@ -53,7 +53,7 @@ if the LEDs are connected like:
 /
 8 -- 9 -- ...
 */
-#define LINEBYLINE true
+#define LINEBYLINE false
 
 /*defines the row count of the matrix*/
 constexpr uint8_t rowcount = 10;

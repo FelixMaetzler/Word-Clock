@@ -56,7 +56,7 @@ void Matrix::matrix_to_LEDArray(Strip *strip) const
         {
             // from right to left
             uint8_t counter = 0;
-            for (uint8_t col = colcount - 1; col >= 0; col--)
+            for (int8_t col = colcount - 1; col >= 0; col--)
             {
                 i = row * colcount + counter;
                 strip->set_led(i, this->get_LED(row, col));
@@ -104,7 +104,7 @@ void Matrix::set_last_col(const std::array<RGB, rowcount> col)
 /*
 sets the matrix to the provided tm with the provided color
 */
-void Matrix::set_digital_clock(const tm time, const RGB color)
+void Matrix::set_digital_clock(const tm time, const std::array<RGB, 4> color)
 {
     const uint8_t hour_tens_digit = time.tm_hour / 10;
     const uint8_t hour_ones_digit = time.tm_hour % 10;
@@ -123,19 +123,19 @@ void Matrix::set_digital_clock(const tm time, const RGB color)
         {
         case 0:
             row_begin = const_row_begin + 0;
-            col_begin = const_col_begin + 1;
+            col_begin = const_col_begin + 2;
             break;
         case 1:
             row_begin = const_row_begin + 0;
-            col_begin = const_col_begin + 6;
+            col_begin = const_col_begin + 5;
             break;
         case 2:
             row_begin = const_row_begin + 5;
-            col_begin = const_col_begin + 0;
+            col_begin = const_col_begin + 2;
             break;
         case 3:
             row_begin = const_row_begin + 5;
-            col_begin = const_col_begin + 7;
+            col_begin = const_col_begin + 5;
             break;
         }
 
@@ -144,7 +144,7 @@ void Matrix::set_digital_clock(const tm time, const RGB color)
             for (uint8_t col = col_begin; col < col_begin + 3; col++)
             {
                 bool OnOff = number[row - row_begin][col - col_begin];
-                this->set_LED(bool_to_color(OnOff, color), row, col);
+                this->set_LED(bool_to_color(OnOff, color.at(i)), row, col);
             }
         }
     }
