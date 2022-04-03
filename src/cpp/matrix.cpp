@@ -174,7 +174,7 @@ uint16_t Matrix::scrolling_text(const uint16_t framecounter, String &sentence, c
     const uint8_t letterIndex = framecounter / 6;
     const uint8_t letterColIndex = framecounter % 6;
     const char letter = sentence.charAt(letterIndex);
-    DEBUG_PRINT(letter);
+    // DEBUG_PRINT(letter);
     std::array<RGB, rowcount> matrix_last_col;
     matrix_last_col.fill(RGB(0));
     constexpr uint8_t start = (rowcount / 2) - 3;
@@ -189,11 +189,19 @@ uint16_t Matrix::scrolling_text(const uint16_t framecounter, String &sentence, c
     }
     else if ('0' <= letter && letter <= '9')
     {
-        letterbuffer = decompress7x5(letter - '0');
+        letterbuffer = decompress7x5(letter - '0'); // I think that does not work. FIX
     }
     else if (letter == ' ')
     {
         // its the space bar
+    }
+    else if (letter == '\0')
+    {
+        // its the end of the String
+    }
+    else if ('a' <= letter && letter <= 'z')
+    {
+        letterbuffer = decompress7x5((letter - 'a')); // to uppercase. FIX
     }
     else
     {
@@ -202,7 +210,7 @@ uint16_t Matrix::scrolling_text(const uint16_t framecounter, String &sentence, c
 
     for (uint8_t i = start; i < start + 7; i++)
     {
-        matrix_last_col[i] = bool_to_color(letterbuffer[i - start][letterColIndex], color);
+        matrix_last_col[i] = bool_to_color(letterbuffer[i - start][letterColIndex], color); // exchange to .at FIX
     }
     this->shift_Left();
     this->set_last_col(matrix_last_col);

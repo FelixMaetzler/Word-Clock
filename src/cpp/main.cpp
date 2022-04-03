@@ -11,7 +11,12 @@
 uint8_t offset = 0;
 uint16_t counter = 0;
 uint8_t led_count = 15;
+String Scrolling_Text = "";
 Matrix matrix;
+
+bool modeWordClock = true;
+bool modeDigitalClock = false;
+bool modeScrollingText = false;
 
 // this variables get set every sec/min/h/d
 // because of this, youc can do things every sec/min/h/d in the loop()
@@ -193,16 +198,19 @@ that single 10ms can be skipped.
 */
 void every_10ms()
 {
-  if (offset == 25)
+  if (modeScrollingText)
   {
-    offset = 0;
-    String string = "FEIERABEND";
-    counter = matrix.scrolling_text(counter, string, RGB(50, 0, 0));
-    matrix.debug_print();
-    matrix.matrix_to_LEDArray(&strip);
-    strip.show();
+    if (offset == 25)
+    {
+      offset = 0;
+
+      counter = matrix.scrolling_text(counter, Scrolling_Text, RGB(50, 0, 0));
+      // matrix.debug_print();
+      matrix.matrix_to_LEDArray(&strip);
+      strip.show();
+    }
+    offset++;
   }
-  offset++;
 }
 /*
 gets executed roughly every second
@@ -211,17 +219,6 @@ that single seconds can be skiped.
 */
 void every_sec()
 {
-
-  /*
-  matrix.clear();
-  matrix.set_letter('A' + counter, 0,0,RGB(10,0,0));
-  counter++;
-  if(counter > 25){
-    counter = 0;
-  }
-  matrix.matrix_to_LEDArray(&strip);
-  strip.show();
-  */
 }
 /*
 gets executed roughly every minute
@@ -236,15 +233,18 @@ void every_min()
   {
     syncDatum(&time_and_date_isr);
   }
-  matrix.clear();
+  if (modeDigitalClock)
+  {
+    matrix.clear();
 
-  // matrix.set_LED(RgbColor(255), 0, 0);
-  // matrix.set_digital_clock(Date_and_Time(time_and_date), std::array<RGB, 4> {RGB(10,0,0), RGB(0,10,0), RGB(0,0,10), RGB(10)});
-  matrix.set_digital_clock(Date_and_Time(time_and_date));
+    // matrix.set_LED(RgbColor(255), 0, 0);
+    // matrix.set_digital_clock(Date_and_Time(time_and_date), std::array<RGB, 4> {RGB(10,0,0), RGB(0,10,0), RGB(0,0,10), RGB(10)});
+    matrix.set_digital_clock(Date_and_Time(time_and_date));
 
-  matrix.debug_print();
-  matrix.matrix_to_LEDArray(&strip); // to to;
-  strip.show();
+    matrix.debug_print();
+    matrix.matrix_to_LEDArray(&strip); // to to;
+    strip.show();
+  }
 }
 /*
 gets executed roughly every hour
