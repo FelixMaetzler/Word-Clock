@@ -31,12 +31,11 @@ function initButton(){
 function onmessage(event){
     console.log(`Received a notification from ${event.origin}`);
     console.log(event);
-    document.getElementById('led').className = event.data;
-    
-    
+    let data = JSON.parse(event.data);
+    document.getElementById('led').className = data.status;
 }
-function onToggle(event){
-    websocket.send('toggle');
+function onToggle(event) {
+    websocket.send(JSON.stringify({'action':'toggle'}));
 }
 
 function onOpen(event) {
