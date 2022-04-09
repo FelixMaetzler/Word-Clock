@@ -17,3 +17,12 @@ extern bool modeDigitalClock;
 extern bool modeScrollingText;
 String processor(const String &);
 void webserver_Setup();
+void websocket_Setup();
+void onEvent(AsyncWebSocket *server,
+             AsyncWebSocketClient *client,
+             AwsEventType type,
+             void *arg,
+             uint8_t *data,
+             size_t len);
+void onRootRequest(AsyncWebServerRequest *request);
+void handleWebSocketMessage(void *arg, uint8_t *data, size_t len);

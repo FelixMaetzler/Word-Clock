@@ -14,6 +14,8 @@ uint8_t led_count = 15;
 String Scrolling_Text = "";
 Matrix matrix;
 
+extern AsyncWebSocket ws;
+
 bool modeWordClock = true;
 bool modeDigitalClock = false;
 bool modeScrollingText = false;
@@ -91,6 +93,7 @@ void setup()
 {
   Serial.begin(115200);
   ntp_setup();
+  websocket_Setup();
   webserver_Setup();
 
   strip.begin();
@@ -219,6 +222,7 @@ that single seconds can be skiped.
 */
 void every_sec()
 {
+  ws.cleanupClients();
 }
 /*
 gets executed roughly every minute

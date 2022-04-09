@@ -1,7 +1,8 @@
 #include "header/webserver.h"
 
 AsyncWebServer server(80);
-
+AsyncWebSocket ws("/ws");
+bool test1234 = false;
 String processor(const String &var)
 {
     DEBUG_PRINT(var);
@@ -44,6 +45,40 @@ String processor(const String &var)
     }
     return String();
 }
+void onEvent(AsyncWebSocket *server,
+             AsyncWebSocketClient *client,
+             AwsEventType type,
+             void *arg,
+             uint8_t *data,
+             size_t len)
+{
+    switch (type)
+    {
+    case WS_EVT_CONNECT:
+
+        DEBUG_PRINT("WebSocket client #" + String(client->id()) + " connected from " + String(client->remoteIP().toString().c_str()) + "\n");
+        break;
+    case WS_EVT_DISCONNECT:
+        DEBUG_PRINT("WebSocket client #" + String(client->id()) + " disconnected\n");
+        break;
+    case WS_EVT_DATA:
+    handleWebSocketMessage(arg, data, len);
+    break;
+    case WS_EVT_PONG:
+    case WS_EVT_ERROR:
+        break;
+    }
+}
+void websocket_Setup()
+{
+    DEBUG_PRINT("test2");
+    ws.onEvent(onEvent);
+    server.addHandler(&ws);
+}
+void onRootRequest(AsyncWebServerRequest *request)
+{
+    request->send(LittleFS, "/index.html", "text/html", false, processor);
+}
 void webserver_Setup()
 {
     if (!LittleFS.begin())
@@ -51,10 +86,13 @@ void webserver_Setup()
         DEBUG_PRINT("An Error has occurred while mounting LittleFS");
         return;
     }
-    if(MDNS.begin("wordclock")){
+    if (MDNS.begin("wordclock"))
+    {
         DEBUG_PRINT("MDNS started");
     }
-    
+    server.on("/", onRootRequest);
+    server.serveStatic("/", LittleFS, "/").setDefaultFile("index.html");
+
     // Route for root / web page
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
               { request->send(LittleFS, "/index.html", String(), false, processor); });
@@ -66,65 +104,78 @@ void webserver_Setup()
     // Route to set GPIO to HIGH
     server.on("/led2on", HTTP_GET, [](AsyncWebServerRequest *request)
               {
-    led_count = 15;   
-    request->send(LittleFS, "/index.html", String(), false, processor); });
+                      ws.textAll("on");
+        led_count = 15;
+        request->send(LittleFS, "/index.html", String(), false, processor); });
 
     // Route to set GPIO to LOW
     server.on("/led2off", HTTP_GET, [](AsyncWebServerRequest *request)
               {
-    led_count = 0;
-    strip.clear();
-    request->send(LittleFS, "/index.html", String(), false, processor); });
+                      ws.textAll("off");
+        led_count = 0;
+        strip.clear();
+        request->send(LittleFS, "/index.html", String(), false, processor); });
 
     server.on("/get", HTTP_GET, [](AsyncWebServerRequest *request)
               {
-    String inputMessage;
-    String inputParam;
-    // GET input1 value on <ESP_IP>/get?input1=<inputMessage>
-    if (request->hasParam("input1")) {
-      inputMessage = request->getParam("input1")->value();
-      inputParam = "input1";
-      led_count = inputMessage.toInt();
-      strip.clear();
-      DEBUG_PRINT("LEDCount: " + String(led_count));
-    
-    } 
-    else if (request->hasParam("input2"))
-    {
-inputMessage = request->getParam("input2")->value();
-      inputMessage = request->getParam("input2")->value();
-      inputParam = "input2";
-      Scrolling_Text = inputMessage;
-      DEBUG_PRINT("Set Scrolling text to: " + inputMessage);
-    } else if(request->hasParam("mode")){
-inputMessage = request->getParam("mode")->value();
-      inputParam = "mode";
-      if(inputMessage == "wordclock"){
-          DEBUG_PRINT("Set Mode to: " + inputMessage);
-          modeWordClock = true;
-          modeScrollingText = false;
-          modeDigitalClock = false;
-      }else if(inputMessage == "digitalclock"){
-          DEBUG_PRINT("Set Mode to: " + inputMessage);
-          modeWordClock = false;
-          modeScrollingText = false;
-          modeDigitalClock = true;
-      }else if(inputMessage == "scrollingtext"){
-          DEBUG_PRINT("Set Mode to: " + inputMessage);
-          modeWordClock = false;
-          modeScrollingText = true;
-          modeDigitalClock = false;
-      }
-      
-    }
-    request->send(LittleFS, "/index.html", String(), false, processor); });
+        String inputMessage;
+        String inputParam;
+        // GET input1 value on <ESP_IP>/get?input1=<inputMessage>
+        if (request->hasParam("input1")) {
+          inputMessage = request->getParam("input1")->value();
+          inputParam = "input1";
+          led_count = inputMessage.toInt();
+          strip.clear();
+          DEBUG_PRINT("LEDCount: " + String(led_count));
+
+        }
+        else if (request->hasParam("input2"))
+        {
+    inputMessage = request->getParam("input2")->value();
+          inputMessage = request->getParam("input2")->value();
+          inputParam = "input2";
+          Scrolling_Text = inputMessage;
+          DEBUG_PRINT("Set Scrolling text to: " + inputMessage);
+        } else if(request->hasParam("mode")){
+    inputMessage = request->getParam("mode")->value();
+          inputParam = "mode";
+          if(inputMessage == "wordclock"){
+              DEBUG_PRINT("Set Mode to: " + inputMessage);
+              modeWordClock = true;
+              modeScrollingText = false;
+              modeDigitalClock = false;
+          }else if(inputMessage == "digitalclock"){
+              DEBUG_PRINT("Set Mode to: " + inputMessage);
+              modeWordClock = false;
+              modeScrollingText = false;
+              modeDigitalClock = true;
+          }else if(inputMessage == "scrollingtext"){
+              DEBUG_PRINT("Set Mode to: " + inputMessage);
+              modeWordClock = false;
+              modeScrollingText = true;
+              modeDigitalClock = false;
+          }
+
+        }
+        request->send(LittleFS, "/index.html", String(), false, processor); });
 
     server.on("/led2off", HTTP_GET, [](AsyncWebServerRequest *request)
               {
-    led_count = 0;
-    strip.clear();
-    request->send(LittleFS, "/index.html", String(), false, processor); });
+        led_count = 0;
+        strip.clear();
+        request->send(LittleFS, "/index.html", String(), false, processor); });
 
     // Start server
     server.begin();
+}
+void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
+    AwsFrameInfo *info = (AwsFrameInfo*)arg;
+    if (info->final && info->index == 0 && info->len == len && info->opcode == WS_TEXT) {
+        data[len] = 0;
+        if (strcmp((char*)data, "toggle") == 0) {
+            //led.on = !led.on;
+            test1234 = !test1234;
+            ws.textAll(test1234 ? "on" : "off");
+        }
+    }
 }
