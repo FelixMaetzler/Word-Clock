@@ -51,6 +51,10 @@ void webserver_Setup()
         DEBUG_PRINT("An Error has occurred while mounting LittleFS");
         return;
     }
+    if(MDNS.begin("wordclock")){
+        DEBUG_PRINT("MDNS started");
+    }
+    
     // Route for root / web page
     server.on("/", HTTP_GET, [](AsyncWebServerRequest *request)
               { request->send(LittleFS, "/index.html", String(), false, processor); });

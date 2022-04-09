@@ -116,7 +116,7 @@ void setup()
 
 void loop()
 {
-
+MDNS.update();
   // DONT TOUCH THE FOLLOWING BLOCK
   {
     noInterrupts();
