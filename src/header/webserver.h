@@ -17,7 +17,7 @@ extern bool modeWordClock;
 extern bool modeDigitalClock;
 extern bool modeScrollingText;
 
-constexpr uint8_t json_elements_count = 10;
+constexpr uint8_t json_elements_count = 20;
 String processor(const String &);
 void webserver_Setup();
 void websocket_Setup();

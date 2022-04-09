@@ -12,6 +12,7 @@ window.addEventListener('load', onLoad);
 function onLoad(event) {
     initWebSocket();
     initButton();
+    initTextbox();
 }
 
 // ----------------------------------------------------------------------------
@@ -26,7 +27,12 @@ function initWebSocket() {
     websocket.onmessage = onmessage;
 }
 function initButton(){
+    console.log("init Button");
     document.getElementById('toggle').addEventListener('click', onToggle);
+}
+function initTextbox(){
+    console.log("init Textbox");
+    document.getElementById('scrollingTextSubmit').addEventListener('click', onChange)
 }
 function onmessage(event){
     console.log(`Received a notification from ${event.origin}`);
@@ -36,6 +42,13 @@ function onmessage(event){
 }
 function onToggle(event) {
     websocket.send(JSON.stringify({'action':'toggle'}));
+}
+function onChange(event){
+    let data = document.getElementById("InputScrollingText").value;
+    console.log(data);
+    let test = JSON.stringify({'scrollingText': data, 'action':'toggle'})
+    console.log(test);
+    websocket.send(test);
 }
 
 function onOpen(event) {

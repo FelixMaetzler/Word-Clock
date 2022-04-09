@@ -5,11 +5,12 @@ AsyncWebSocket ws("/ws");
 bool test1234 = false;
 void notifyClients()
 {
-    constexpr uint8_t size = JSON_OBJECT_SIZE(json_elements_count);
+    constexpr uint16_t size = JSON_OBJECT_SIZE(json_elements_count);
     StaticJsonDocument<size> json;
     json["status"] = test1234 ? "on" : "off";
+    json["scrollingText"] = Scrolling_Text;
 
-    char data[17];
+    char data[170];
     size_t len = serializeJson(json, data);
     DEBUG_PRINT("JSON: " + String(data));
     ws.textAll(data, len);
@@ -76,16 +77,22 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len)
     if (info->final && info->index == 0 && info->len == len && info->opcode == WS_TEXT)
     {
 
-        constexpr uint8_t size = JSON_OBJECT_SIZE(json_elements_count);
+        constexpr uint16_t size = JSON_OBJECT_SIZE(json_elements_count);
         StaticJsonDocument<size> json;
         DeserializationError err = deserializeJson(json, data);
         if (err)
         {
-            Serial.print(F("deserializeJson() failed with code "));
-            Serial.println(err.c_str());
+            Serial.print(F("deserializeJson() failed with code ")); // To do
+            Serial.println(err.c_str());                            // To do
             return;
         }
+        // TO DO...
         const char *action = json["action"];
+        const char *scrollingText = json["scrollingText"];
+        Scrolling_Text = scrollingText;
+        modeDigitalClock = false;
+        modeScrollingText = true;
+        modeWordClock = false;
         if (strcmp(action, "toggle") == 0)
         {
             test1234 = !test1234;
