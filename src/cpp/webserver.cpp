@@ -18,10 +18,29 @@ String processor(const String &var)
         DEBUG_PRINT("LED Strip status: " + ledState);
         return ledState;
     }
-    if (var == "TEST_VAR")
+    else if (var == "TEST_VAR")
     {
         DEBUG_PRINT("Test: " + String(led_count));
         return String(led_count);
+    }
+    else if (var == "MODE")
+    {
+        if (modeDigitalClock)
+        {
+            return "Digital Clock";
+        }
+        else if (modeScrollingText)
+        {
+            return "Scrolling text";
+        }
+        else if (modeWordClock)
+        {
+            return "Word Clock";
+        }
+    }
+    else if (var == "SCROLLING_TEXT")
+    {
+        return Scrolling_Text;
     }
     return String();
 }
