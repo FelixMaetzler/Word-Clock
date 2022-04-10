@@ -9,6 +9,9 @@ void notifyClients()
     StaticJsonDocument<size> json;
     json["status"] = test1234 ? "on" : "off";
     json["scrollingText"] = Scrolling_Text;
+     json["modeDC"] = modeDigitalClock;
+json["modeWC"] = modeWordClock;
+json["modeST"] = modeScrollingText;
 
     char data[170];
     size_t len = serializeJson(json, data);
@@ -87,16 +90,12 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len)
             return;
         }
         // TO DO...
-        const char *action = json["action"];
-        const char *scrollingText = json["scrollingText"];
-        Scrolling_Text = scrollingText;
-        modeDigitalClock = false;
-        modeScrollingText = true;
-        modeWordClock = false;
-        if (strcmp(action, "toggle") == 0)
-        {
-            test1234 = !test1234;
-            notifyClients();
-        }
+        //const char *action = json["action"];
+        //const char *scrollingText = json["scrollingText"];
+        Scrolling_Text =  (String) json["scrollingText"];
+        modeDigitalClock = ((String) json["modeDC"]).toInt();
+        modeScrollingText = ((String)json["modeST"]).toInt();
+        modeWordClock = ((String) json["modeWC"]).toInt();
+notifyClients();
     }
 }
