@@ -16,6 +16,7 @@ extern Strip strip;
 extern bool modeWordClock;
 extern bool modeDigitalClock;
 extern bool modeScrollingText;
+extern RGB color;
 
 constexpr uint8_t json_elements_count = 20;
 String processor(const String &);

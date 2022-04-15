@@ -20,6 +20,8 @@ bool modeWordClock = true;
 bool modeDigitalClock = false;
 bool modeScrollingText = false;
 
+RGB color = RGB(255);
+
 // this variables get set every sec/min/h/d
 // because of this, youc can do things every sec/min/h/d in the loop()
 volatile uint8_t counter10ms = 0;
@@ -207,7 +209,7 @@ void every_10ms()
     {
       offset = 0;
 
-      counter = matrix.scrolling_text(counter, Scrolling_Text, RGB(250, 0, 0));
+      counter = matrix.scrolling_text(counter, Scrolling_Text, color);
       // matrix.debug_print();
       matrix.matrix_to_LEDArray(&strip);
       strip.show();
@@ -240,8 +242,9 @@ void every_sec()
     if (modeWordClock)
     {
       matrix.clear();
-      matrix.set_time_in_words_german(time_and_date, RGB(255, 255, 255));
+      matrix.set_time_in_words_german(time_and_date, color);
       matrix.matrix_to_LEDArray(&strip); // to to;
+      strip.set_dots((time_and_date / 60) % 5, color);
       strip.show();
     }
   }

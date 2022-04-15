@@ -11,9 +11,9 @@ window.addEventListener('load', onLoad);
 
 function onLoad(event) {
     initWebSocket();
-    initButton();
     initTextbox();
     initDropdown();
+    initColor();
 }
 
 // ----------------------------------------------------------------------------
@@ -27,10 +27,6 @@ function initWebSocket() {
     websocket.onclose = onClose;
     websocket.onmessage = onmessage;
 }
-function initButton() {
-    console.log("init Button");
-    document.getElementById('toggle').addEventListener('click', update);
-}
 function initTextbox() {
     console.log("init Textbox");
     document.getElementById('scrollingTextSubmit').addEventListener('click', update);
@@ -39,11 +35,14 @@ function initDropdown() {
     console.log("init Dropdown");
     document.getElementById('mode').addEventListener('click', update);
 }
+function initColor() {
+    console.log("init Color");
+    document.getElementById('color').addEventListener('change', update);
+}
 function onmessage(event) {
     console.log(`Received a notification from ${event.origin}`);
     console.log(event);
     let data = JSON.parse(event.data);
-    document.getElementById('led').className = data.status;
     if (data.modeWC) {
         document.getElementById('mode').value = 0;
     } else if (data.modeDC) {
@@ -52,6 +51,9 @@ function onmessage(event) {
         document.getElementById('mode').value = 2;
     }
     document.getElementById('InputScrollingText').value = data.scrollingText
+    let colorstring =  '#'+(Number(data.R)).toString(16).padStart(2, '0')+(Number(data.G)).toString(16).padStart(2, '0')+(Number(data.B)).toString(16).padStart(2, '0');
+    console.log(colorstring);
+    document.getElementById('color').value = colorstring;
 }
 
 
@@ -83,13 +85,21 @@ function update(event) {
     }
 
     let scrollingtext = document.getElementById("InputScrollingText").value;
+    let color = document.getElementById("color").value;
+    console.log(document.getElementById('color'));
+    let r = parseInt(color[1] + color[2], 16);
+    let g = parseInt(color[3] + color[4], 16);
+    let b = parseInt(color[5] + color[6], 16);
+    console.log(r, g, b);
     let string = JSON.stringify({
 
         'scrollingText': scrollingtext,
-        'action': 'toggle',
         'modeWC': modeWordclock,
         'modeDC': modeDigitalclock,
-        'modeST': modeScrollingtext
+        'modeST': modeScrollingtext,
+        'R': r,
+        'G': g,
+        'B': b
     });
     console.log(string);
     websocket.send(string);

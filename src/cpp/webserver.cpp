@@ -9,9 +9,12 @@ void notifyClients()
     StaticJsonDocument<size> json;
     json["status"] = test1234 ? "on" : "off";
     json["scrollingText"] = Scrolling_Text;
-     json["modeDC"] = modeDigitalClock;
-json["modeWC"] = modeWordClock;
-json["modeST"] = modeScrollingText;
+    json["modeDC"] = modeDigitalClock;
+    json["modeWC"] = modeWordClock;
+    json["modeST"] = modeScrollingText;
+    json["R"] = color.get_r();
+    json["G"] = color.get_g();
+    json["B"] = color.get_b();
 
     char data[170];
     size_t len = serializeJson(json, data);
@@ -90,12 +93,13 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len)
             return;
         }
         // TO DO...
-        //const char *action = json["action"];
-        //const char *scrollingText = json["scrollingText"];
-        Scrolling_Text =  (String) json["scrollingText"];
-        modeDigitalClock = ((String) json["modeDC"]).toInt();
+        // const char *action = json["action"];
+        // const char *scrollingText = json["scrollingText"];
+        Scrolling_Text = (String)json["scrollingText"];
+        modeDigitalClock = ((String)json["modeDC"]).toInt();
         modeScrollingText = ((String)json["modeST"]).toInt();
-        modeWordClock = ((String) json["modeWC"]).toInt();
-notifyClients();
+        modeWordClock = ((String)json["modeWC"]).toInt();
+        color = RGB(((String)json["R"]).toInt(), ((String)json["G"]).toInt(), ((String)json["B"]).toInt());
+        notifyClients();
     }
 }

@@ -47,3 +47,17 @@ void Strip::clear(){
     }
     
 }
+void Strip::set_dots(uint8_t count, RGB color){
+    uint16_t indexfirstdot = colcount * rowcount;
+    for (uint16_t i = 0; i < 4; i++)
+    {
+        this->set_led(indexfirstdot + i, RGB(0));
+    }
+    switch (count)
+    {
+    case 4: this->set_led(indexfirstdot + 3, color);
+    case 3: this->set_led(indexfirstdot + 2, color);
+    case 2: this->set_led(indexfirstdot + 1, color);
+    case 1: this->set_led(indexfirstdot + 0, color);
+    }
+}
