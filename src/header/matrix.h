@@ -3,8 +3,8 @@
 #include <vector>
 #include "release.h"
 
-#include "font7x5.h"
 #include "words_german.h"
+#include "font7x5.h"
 #include "ntp.h"
 
 #pragma once

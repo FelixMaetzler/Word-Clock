@@ -16,7 +16,7 @@ The following code is for a 10x10 Matrix with german wordings
 */
 
 constexpr auto Word_es = encode(0, 0, 2, true);
-constexpr auto Word_ist = encode(0, 4, 3, true);
+constexpr auto Word_ist = encode(0, 3, 3, true);
 constexpr auto Word_fuenfX = encode(1, 0, 4, true);
 constexpr auto Word_zehnX = encode(1, 4, 4, true);
 constexpr auto Word_nach = encode(2, 0, 4, true);
@@ -37,6 +37,35 @@ constexpr auto Word_vier = encode(9, 6, 4, true);
 constexpr auto Word_acht = encode(5, 4, 4, false);
 constexpr auto Word_elf = encode(6, 9, 3, false);
 
+constexpr std::array<encode, 21> to_array(){
+return std::array<encode, 21>{
+    Word_es,
+    Word_ist,
+    Word_fuenfX,
+    Word_zehnX,
+    Word_nach,
+    Word_bis,
+    Word_dreiv,
+    Word_halb,
+    Word_viertel,
+    Word_eins,
+    Word_sechs,
+    Word_zwei,
+    Word_zehn,
+    Word_neun,
+    Word_drei,
+    Word_fuenf,
+    Word_zwoelf,
+    Word_sieben,
+    Word_vier,
+    Word_acht,
+    Word_elf,
+};
+}
+/*Test 123*/
+constexpr  auto Words = to_array();
+
+/*
 constexpr const std::array<encode, 21> Words{
     Word_es,
     Word_ist,
@@ -60,6 +89,7 @@ constexpr const std::array<encode, 21> Words{
     Word_acht,
     Word_elf,
 };
+*/
 
 /*
 converts the hour to the right wording enum
@@ -100,4 +130,7 @@ wording int_to_word(const uint8_t hour)
         return wording::elf;
     }
     return wording::bis;//to do
+}
+encode to_word(uint8_t index){
+    return Words.at(index);
 }

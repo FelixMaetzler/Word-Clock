@@ -255,7 +255,7 @@ inline RGB bool_to_color(const bool x, const RGB color)
 }
 void Matrix::set_word(const word index, const RGB color)
 {
-    const auto word = Words.at(index);
+    const auto word = to_word(index);
     if (word.direction)
     {
         // the word is in one row
@@ -320,6 +320,7 @@ void Matrix::set_time_in_words_german(const time_t t, const RGB color)
         this->set_word(wording::ist, color);
         this->set_word(wording::zehnX, color);
         this->set_word(wording::bis, color);
+        this->set_word(wording::halb, color);
         this->set_word(int_to_word(hour + 1), color);
     }
     else if (time.tm_min < 30)
@@ -329,6 +330,7 @@ void Matrix::set_time_in_words_german(const time_t t, const RGB color)
         this->set_word(wording::ist, color);
         this->set_word(wording::fuenfX, color);
         this->set_word(wording::bis, color);
+        this->set_word(wording::halb, color);
         this->set_word(int_to_word(hour + 1), color);
     }
     else if (time.tm_min < 35)
@@ -346,6 +348,7 @@ void Matrix::set_time_in_words_german(const time_t t, const RGB color)
         this->set_word(wording::ist, color);
         this->set_word(wording::fuenfX, color);
         this->set_word(wording::nach, color);
+        this->set_word(wording::halb, color);
         this->set_word(int_to_word(hour + 1), color);
     }
     else if (time.tm_min < 45)
@@ -355,6 +358,7 @@ void Matrix::set_time_in_words_german(const time_t t, const RGB color)
         this->set_word(wording::ist, color);
         this->set_word(wording::zehnX, color);
         this->set_word(wording::nach, color);
+        this->set_word(wording::halb, color);
         this->set_word(int_to_word(hour + 1), color);
     }
     else if (time.tm_min < 50)
