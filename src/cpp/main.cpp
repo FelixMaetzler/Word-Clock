@@ -14,6 +14,8 @@ uint8_t led_count = 15;
 String Scrolling_Text = "";
 Matrix matrix;
 
+extern AsyncWebSocket ws;
+
 bool modeWordClock = true;
 bool modeDigitalClock = false;
 bool modeScrollingText = false;
@@ -91,6 +93,7 @@ void setup()
 {
   Serial.begin(115200);
   ntp_setup();
+  websocket_Setup();
   webserver_Setup();
 
   strip.begin();
@@ -116,7 +119,7 @@ void setup()
 
 void loop()
 {
-MDNS.update();
+  MDNS.update();
   // DONT TOUCH THE FOLLOWING BLOCK
   {
     noInterrupts();
@@ -204,7 +207,7 @@ void every_10ms()
     {
       offset = 0;
 
-      counter = matrix.scrolling_text(counter, Scrolling_Text, RGB(50, 0, 0));
+      counter = matrix.scrolling_text(counter, Scrolling_Text, RGB(250, 0, 0));
       // matrix.debug_print();
       matrix.matrix_to_LEDArray(&strip);
       strip.show();
@@ -219,6 +222,29 @@ that single seconds can be skiped.
 */
 void every_sec()
 {
+  ws.cleanupClients();
+  if (time_and_date % 5 == 0)
+  {
+    if (modeDigitalClock)
+    {
+      matrix.clear();
+
+      // matrix.set_LED(RgbColor(255), 0, 0);
+      // matrix.set_digital_clock(Date_and_Time(time_and_date), std::array<RGB, 4> {RGB(10,0,0), RGB(0,10,0), RGB(0,0,10), RGB(10)});
+      matrix.set_digital_clock(Date_and_Time(time_and_date), {RGB(200, 0, 0), RGB(0, 200, 0), RGB(0, 0, 200), RGB(200, 0, 200)});
+
+      matrix.debug_print();
+      matrix.matrix_to_LEDArray(&strip); // to to;
+      strip.show();
+    }
+    if (modeWordClock)
+    {
+      matrix.clear();
+      matrix.set_time_in_words_german(time_and_date, RGB(255, 255, 255));
+      matrix.matrix_to_LEDArray(&strip); // to to;
+      strip.show();
+    }
+  }
 }
 /*
 gets executed roughly every minute
@@ -232,18 +258,6 @@ void every_min()
   if (time_and_date % (5 * 60) == 0)
   {
     syncDatum(&time_and_date_isr);
-  }
-  if (modeDigitalClock)
-  {
-    matrix.clear();
-
-    // matrix.set_LED(RgbColor(255), 0, 0);
-    // matrix.set_digital_clock(Date_and_Time(time_and_date), std::array<RGB, 4> {RGB(10,0,0), RGB(0,10,0), RGB(0,0,10), RGB(10)});
-    matrix.set_digital_clock(Date_and_Time(time_and_date));
-
-    matrix.debug_print();
-    matrix.matrix_to_LEDArray(&strip); // to to;
-    strip.show();
   }
 }
 /*

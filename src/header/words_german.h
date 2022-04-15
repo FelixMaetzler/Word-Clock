@@ -46,3 +46,5 @@ struct encode
 };
 
 wording int_to_word(const uint8_t);
+constexpr std::array<encode, 21> to_array();
+encode to_word(uint8_t);
