@@ -60,10 +60,10 @@ returns the current date with time
 It also already directly respects summer and winter time
 for this simply the Unix time is transferred
 */
-tm get_Date_and_Time(const long long unix)
+tm get_Date_and_Time(const long long unixtime)
 {
   tm date_and_time;
-  time_t time = unix;
+  time_t time = unixtime;
   localtime_r(&time, &date_and_time);
   return date_and_time;
 }
@@ -94,10 +94,10 @@ String Date_and_Time_to_String(const time_t date_and_time)
 converts the Unix time to a correct date
 Summer and winter time is already considered
 */
-tm Date_and_Time(const time_t unix)
+tm Date_and_Time(const time_t unixtime)
 {
   tm date_and_time;
-  localtime_r(&unix, &date_and_time);
+  localtime_r(&unixtime, &date_and_time);
   return date_and_time;
 }
 /*
